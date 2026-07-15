@@ -51,6 +51,9 @@ interface MemorialData {
 async function getMemorial(slug: string): Promise<MemorialData | null> {
   const supabase = createSupabaseServerClient();
 
+  // Nota: los mensajes del libro de recuerdos se consultan aparte (no aquí),
+  // porque un memorial recién creado puede no tener ningún mensaje todavía,
+  // y un inner join los excluiría por completo de este resultado.
   const { data: memorial, error } = await supabase
     .from('memorials')
     .select(
@@ -58,12 +61,10 @@ async function getMemorial(slug: string): Promise<MemorialData | null> {
       id, slug, visibility,
       person_profile (*),
       timeline_events (*),
-      media_assets (*),
-      guestbook_entries!inner (*)
+      media_assets (*)
     `
     )
     .eq('slug', slug)
-    .eq('guestbook_entries.moderation_status', 'aprobado')
     .single();
 
   if (error || !memorial) return null;
@@ -98,9 +99,6 @@ export async function generateMetadata({ params }: MemorialPageProps): Promise<M
       type: 'profile',
       images: profile.main_photo_url ? [profile.main_photo_url] : [],
     },
-    other: {
-      // JSON-LD se inyecta desde el componente para mantener el tipo Person de Schema.org
-    },
   };
 }
 
@@ -133,7 +131,7 @@ export default async function MemorialPage({ params }: MemorialPageProps) {
         </p>
         {profile.favorite_quotes?.[0] && (
           <p className="font-display italic text-lg text-ink/85 max-w-md mx-auto mt-6">
-            “{profile.favorite_quotes[0]}”
+            "{profile.favorite_quotes[0]}"
           </p>
         )}
       </section>
