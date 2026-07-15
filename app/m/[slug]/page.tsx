@@ -13,7 +13,42 @@ interface MemorialPageProps {
   params: { slug: string };
 }
 
-async function getMemorial(slug: string) {
+// Tipos explícitos: sin un archivo de tipos generado por Supabase, el cliente
+// no sabe que person_profile es una relación uno-a-uno (no un arreglo), lo que
+// hace fallar el chequeo de tipos en el build. Estos tipos resuelven eso.
+interface PersonProfile {
+  full_name: string;
+  birth_date: string | null;
+  death_date: string | null;
+  biography: string | null;
+  favorite_quotes: string[] | null;
+  main_photo_url?: string | null;
+}
+
+interface TimelineEventRow {
+  id: string;
+  event_date: string | null;
+  title: string;
+  description: string | null;
+}
+
+interface MediaAssetRow {
+  id: string;
+  type: 'foto' | 'video' | 'audio' | 'documento' | 'carta';
+  storage_path: string;
+  caption: string | null;
+}
+
+interface MemorialData {
+  id: string;
+  slug: string;
+  visibility: string;
+  person_profile: PersonProfile;
+  timeline_events: TimelineEventRow[];
+  media_assets: MediaAssetRow[];
+}
+
+async function getMemorial(slug: string): Promise<MemorialData | null> {
   const supabase = createSupabaseServerClient();
 
   const { data: memorial, error } = await supabase
@@ -32,7 +67,16 @@ async function getMemorial(slug: string) {
     .single();
 
   if (error || !memorial) return null;
-  return memorial;
+
+  // Supabase devuelve la relación uno-a-uno como arreglo de un elemento
+  // cuando no hay tipos generados; la normalizamos aquí a un solo objeto.
+  const rawProfile = memorial.person_profile as unknown;
+  const profile = Array.isArray(rawProfile) ? rawProfile[0] : rawProfile;
+
+  return {
+    ...memorial,
+    person_profile: profile,
+  } as MemorialData;
 }
 
 // Metadata dinámica: cada memorial genera sus propios meta tags, Open Graph
