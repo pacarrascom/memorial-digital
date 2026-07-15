@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-stone text-ink;
+  }
+
+  ::selection {
+    @apply bg-flame/30;
+  }
+
+  :focus-visible {
+    outline: 2px solid theme('colors.flame');
+    outline-offset: 2px;
+  }
+}
