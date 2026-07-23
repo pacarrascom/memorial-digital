@@ -1,0 +1,55 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+.dark {
+  color-scheme: dark;
+}
+
+@layer base {
+  body {
+    @apply bg-stone-50 text-ink-900 font-body antialiased;
+  }
+  .dark body {
+    @apply bg-mist-night text-stone-100;
+  }
+
+  h1, h2, h3 {
+    @apply font-display;
+  }
+
+  /* Foco de teclado siempre visible — accesibilidad WCAG AA */
+  :focus-visible {
+    outline: 2px solid theme("colors.flame.DEFAULT");
+    outline-offset: 2px;
+  }
+
+  /* Respeta reduce-motion */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* El elemento de firma de marca: "cinta de luz" vertical.
+   Aparece en el borde izquierdo del hero de cada memorial. */
+.ribbon-of-light {
+  position: relative;
+  overflow: hidden;
+}
+.ribbon-of-light::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 3px;
+  background: linear-gradient(180deg, theme("colors.flame.400"), theme("colors.moss.600"));
+  @apply animate-ribbon-draw;
+}
