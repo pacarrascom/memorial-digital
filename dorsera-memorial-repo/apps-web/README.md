@@ -25,10 +25,24 @@ La **página pública del memorial** (`/m/[slug]`), que es el destino real de ca
 4. Corre `npm install` y `npm run dev`.
 5. Prueba con un `slug` real de un memorial ya sembrado en la base de datos.
 
+## Autenticación (agregado)
+
+- `middleware.ts` + `lib/supabase/middleware.ts` — refresca la sesión en cada request y protege `/admin/*`, redirigiendo a `/login?redirectTo=...` si no hay sesión.
+- `lib/actions/auth.ts` — Server Actions `signUp`, `signIn`, `signOut` (usan `useActionState` en el cliente).
+- `app/(auth)/login` y `app/(auth)/register` — páginas con sus formularios (`components/auth/`).
+- `app/auth/callback/route.ts` — intercambia el `?code=` del enlace de confirmación por una sesión (también sirve para OAuth futuro).
+- `app/admin/` — layout + página placeholder protegida, muestra las familias del usuario en sesión.
+
+Variable de entorno adicional necesaria:
+```
+NEXT_PUBLIC_SITE_URL=https://tu-dominio.com   # usado en el emailRedirectTo del registro
+```
+
+En Supabase: en **Authentication → URL Configuration**, agrega `https://tu-dominio.com/auth/callback` (y el de `localhost:3000` para desarrollo) a la lista de Redirect URLs, o el enlace de confirmación no funcionará.
+
 ## Lo que falta (siguientes entregables sugeridos)
 
-- **Panel de administración familiar**: formulario de edición de biografía/timeline/galería, moderación de tributos (aprobar/rechazar), gestión de colaboradores.
-- **Flujo de autenticación**: páginas de login/registro con Supabase Auth + middleware de sesión.
+- **Panel de administración familiar**: formulario de edición de biografía/timeline/galería, moderación de tributos (aprobar/rechazar), creación de `family_groups` y gestión de colaboradores.
 - **Generación de QR**: Edge Function que crea el `short_code`, y renderiza PNG/SVG/PDF (librería `qrcode` ya está en `package.json`).
 - **Panel de funeraria (B2B)**: alta de memoriales para clientes, vista agregada de sus memoriales gestionados.
 - **Árbol genealógico interactivo**: componente de visualización de grafo sobre `family_tree_relationships`.

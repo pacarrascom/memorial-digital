@@ -1,0 +1,3 @@
+0000000000000000000000000000000000000000 2265442820fb04e754b8adda11c27b705cdb8dab Andre <andre@dorsera.local> 1784780185 +0000	commit (initial): Base fundacional: doc de arquitectura, migraciones SQL y frontend de la página pública del memorial
+2265442820fb04e754b8adda11c27b705cdb8dab fe1ca30dcc72faacb070524728cb2d8b9c99f9cc Andre <andre@dorsera.local> 1784781460 +0000	commit: Agregar autenticación: middleware de sesión, login/registro, callback y panel admin protegido
+fe1ca30dcc72faacb070524728cb2d8b9c99f9cc 9c45c94d655d6c2de5c3f29135b6b3115b20dbbc Andre <andre@dorsera.local> 1784781650 +0000	commit: Agregar .env.example con NEXT_PUBLIC_SITE_URL y demás variables de entorno
