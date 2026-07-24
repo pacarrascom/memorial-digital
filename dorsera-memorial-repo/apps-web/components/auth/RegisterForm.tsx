@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 
-export default function RegisterForm() {
+export function RegisterForm() {
   const router = useRouter()
   const supabase = createClient()
 
