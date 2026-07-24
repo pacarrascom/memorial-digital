@@ -1,69 +1,96 @@
-"use client";
+'use client'
 
-import { useActionState } from "react";
-import { useSearchParams } from "next/navigation";
-import Link from "next/link";
-import { signIn, type AuthActionState } from "@/lib/actions/auth";
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { createClient } from '@/lib/supabase/client'
 
-const initialState: AuthActionState = { error: null };
+export default function LoginForm() {
+  const router = useRouter()
+  const supabase = createClient()
 
-export function LoginForm() {
-  const searchParams = useSearchParams();
-  const redirectTo = searchParams.get("redirectTo") ?? "/admin";
-  const [state, formAction, pending] = useActionState(signIn, initialState);
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState<string | null>(null)
+  const [loading, setLoading] = useState(false)
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    setError(null)
+    setLoading(true)
+
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    })
+
+    setLoading(false)
+
+    if (error) {
+      setError(
+        error.message === 'Invalid login credentials'
+          ? 'Correo o contraseña incorrectos.'
+          : 'Ocurrió un error al iniciar sesión. Intenta nuevamente.'
+      )
+      return
+    }
+
+    router.refresh()
+    router.push('/admin')
+  }
 
   return (
-    <form action={formAction} className="space-y-4">
-      <input type="hidden" name="redirectTo" value={redirectTo} />
-
-      <div>
-        <label htmlFor="email" className="mb-1 block text-sm text-ink-700 dark:text-stone-100">
+    <form onSubmit={handleSubmit} className="w-full max-w-sm space-y-5">
+      <div className="space-y-1.5">
+        <label
+          htmlFor="email"
+          className="block text-sm font-medium text-stone-700"
+        >
           Correo electrónico
         </label>
         <input
           id="email"
-          name="email"
           type="email"
-          autoComplete="email"
           required
-          className="w-full rounded-lg border border-ash bg-transparent px-4 py-2 text-sm dark:border-ash-night"
+          autoComplete="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="w-full rounded-lg border border-stone-300 bg-white px-3.5 py-2.5 text-ink-900 placeholder:text-stone-400 focus:border-moss-500 focus:outline-none focus:ring-1 focus:ring-moss-500"
+          placeholder="tu@correo.com"
         />
       </div>
 
-      <div>
-        <label htmlFor="password" className="mb-1 block text-sm text-ink-700 dark:text-stone-100">
+      <div className="space-y-1.5">
+        <label
+          htmlFor="password"
+          className="block text-sm font-medium text-stone-700"
+        >
           Contraseña
         </label>
         <input
           id="password"
-          name="password"
           type="password"
-          autoComplete="current-password"
           required
-          className="w-full rounded-lg border border-ash bg-transparent px-4 py-2 text-sm dark:border-ash-night"
+          autoComplete="current-password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="w-full rounded-lg border border-stone-300 bg-white px-3.5 py-2.5 text-ink-900 placeholder:text-stone-400 focus:border-moss-500 focus:outline-none focus:ring-1 focus:ring-moss-500"
+          placeholder="••••••••"
         />
       </div>
 
-      {state.error && (
+      {error && (
         <p role="alert" className="text-sm text-flame-600">
-          {state.error}
+          {error}
         </p>
       )}
 
       <button
         type="submit"
-        disabled={pending}
-        className="w-full rounded-full bg-moss-600 px-5 py-2 text-sm text-stone-50 transition-colors hover:bg-moss-800 disabled:opacity-60"
+        disabled={loading}
+        className="w-full rounded-lg bg-ink-900 px-4 py-2.5 font-medium text-white transition hover:bg-ink-800 disabled:cursor-not-allowed disabled:opacity-60"
       >
-        {pending ? "Ingresando…" : "Ingresar"}
+        {loading ? 'Ingresando…' : 'Iniciar sesión'}
       </button>
-
-      <p className="text-center text-sm text-ink-400 dark:text-ash-night">
-        ¿No tienes cuenta?{" "}
-        <Link href="/register" className="text-moss-600 underline underline-offset-2">
-          Crea una
-        </Link>
-      </p>
     </form>
-  );
+  )
 }

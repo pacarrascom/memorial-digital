@@ -1,13 +1,16 @@
-import { createBrowserClient } from "@supabase/ssr";
+import { createBrowserClient } from '@supabase/ssr'
 
 /**
- * Cliente Supabase para Client Components.
- * Usa la anon key pública — todo el acceso a datos queda
- * gobernado por las políticas RLS del proyecto, nunca por este cliente.
+ * Cliente de Supabase para usar en Client Components ('use client').
+ * No estaba entre los módulos que faltaban, pero LoginForm y
+ * RegisterForm lo necesitan para llamar signInWithPassword / signUp
+ * desde el navegador.
  */
 export function createClient() {
-  return createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
+  const supabaseAnonKey =
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ??
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!
+
+  return createBrowserClient(supabaseUrl, supabaseAnonKey)
 }
