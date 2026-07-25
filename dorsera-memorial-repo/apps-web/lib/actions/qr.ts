@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { generateQrAssets, generateShortCode } from '@/lib/qr/generate'
 
 type GenerateQrResult =
@@ -13,10 +14,22 @@ const STORAGE_BUCKET = 'memorial-assets'
 export async function generateQrCode(memorialId: string): Promise<GenerateQrResult> {
   const supabase = await createClient()
 
-  // DEBUG TEMPORAL
-  const { data: authCheck } = await supabase.auth.getUser()
-  if (!authCheck.user) {
-    return { success: false, error: 'DEBUG: no hay usuario autenticado en la Server Action' }
+  const { data: authData } = await supabase.auth.getUser()
+  if (!authData.user) {
+    return { success: false, error: 'No hay una sesión activa.' }
+  }
+
+  const { data: hasPermission, error: permError } = await supabase.rpc('has_memorial_role', {
+    p_memorial_id: memorialId,
+    p_roles: ['admin_familiar'],
+  })
+
+  if (permError) {
+    return { success: false, error: `Error verificando permisos: ${permError.message}` }
+  }
+
+  if (!hasPermission) {
+    return { success: false, error: 'No tienes permiso para generar el QR de este memorial.' }
   }
 
   const { data: memorial, error: memorialError } = await supabase
@@ -32,14 +45,14 @@ export async function generateQrCode(memorialId: string): Promise<GenerateQrResu
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://memorial-digital-lac.vercel.app'
   const publicUrl = `${siteUrl}/m/${memorial.slug}`
   const shortCode = generateShortCode()
-
   const shortUrl = `${siteUrl}/q/${shortCode}`
   const { pngBuffer, svgString } = await generateQrAssets(shortUrl)
 
+  const admin = createAdminClient()
   const pngPath = `qr/${memorialId}/qr.png`
   const svgPath = `qr/${memorialId}/qr.svg`
 
-  const { error: pngUploadError } = await supabase.storage
+  const { error: pngUploadError } = await admin.storage
     .from(STORAGE_BUCKET)
     .upload(pngPath, pngBuffer, { contentType: 'image/png', upsert: true })
 
@@ -47,7 +60,7 @@ export async function generateQrCode(memorialId: string): Promise<GenerateQrResu
     return { success: false, error: `Error subiendo PNG: ${pngUploadError.message}` }
   }
 
-  const { error: svgUploadError } = await supabase.storage
+  const { error: svgUploadError } = await admin.storage
     .from(STORAGE_BUCKET)
     .upload(svgPath, new Blob([svgString], { type: 'image/svg+xml' }), {
       contentType: 'image/svg+xml',
@@ -58,10 +71,10 @@ export async function generateQrCode(memorialId: string): Promise<GenerateQrResu
     return { success: false, error: `Error subiendo SVG: ${svgUploadError.message}` }
   }
 
-  const { data: pngPublic } = supabase.storage.from(STORAGE_BUCKET).getPublicUrl(pngPath)
-  const { data: svgPublic } = supabase.storage.from(STORAGE_BUCKET).getPublicUrl(svgPath)
+  const { data: pngPublic } = admin.storage.from(STORAGE_BUCKET).getPublicUrl(pngPath)
+  const { data: svgPublic } = admin.storage.from(STORAGE_BUCKET).getPublicUrl(svgPath)
 
-  const { error: upsertError } = await supabase.from('qr_codes').upsert(
+  const { error: upsertError } = await admin.from('qr_codes').upsert(
     {
       memorial_id: memorialId,
       public_url: publicUrl,
