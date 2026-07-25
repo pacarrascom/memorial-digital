@@ -13,6 +13,12 @@ const STORAGE_BUCKET = 'memorial-assets'
 export async function generateQrCode(memorialId: string): Promise<GenerateQrResult> {
   const supabase = await createClient()
 
+  // DEBUG TEMPORAL
+  const { data: authCheck } = await supabase.auth.getUser()
+  if (!authCheck.user) {
+    return { success: false, error: 'DEBUG: no hay usuario autenticado en la Server Action' }
+  }
+
   const { data: memorial, error: memorialError } = await supabase
     .from('memorials')
     .select('id, slug')
