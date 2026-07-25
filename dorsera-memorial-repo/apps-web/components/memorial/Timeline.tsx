@@ -34,10 +34,10 @@ export function Timeline({ events }: { events: TimelineEvent[] }) {
                 {event.description}
               </p>
             )}
-            {event.cover_media && (
+            {event.media_assets?.[0] && (
               <Image
-                src={event.cover_media.storage_path}
-                alt={event.cover_media.alt_text}
+                src={event.media_assets[0].storage_path}
+                alt={event.media_assets[0].caption ?? event.title}
                 width={480}
                 height={320}
                 className="mt-3 rounded-xl"

@@ -24,14 +24,14 @@ async function getMemorial(slug: string) {
     .select(
       `
       *,
-      person:persons(*),
-      media_items(*),
-      timeline_events(*, cover_media:media_items(*)),
-      tributes(*)
+      person:person_profile(*),
+      media_items:media_assets(*),
+      timeline_events(*, media_assets(*)),
+      tributes:guestbook_entries(*)
     `
     )
     .eq("slug", slug)
-    .eq("is_published", true)
+    .eq("visibility", "publico")
     .maybeSingle();
 
   if (error || !data) return null;

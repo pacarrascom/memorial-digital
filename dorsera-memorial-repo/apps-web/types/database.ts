@@ -83,7 +83,7 @@ export interface TimelineEvent {
   location: string | null;
   cover_media_id: string | null;
   sort_order: number;
-  cover_media?: MediaItem;
+  media_assets?: MediaItem[];
 }
 
 export interface Tribute {
