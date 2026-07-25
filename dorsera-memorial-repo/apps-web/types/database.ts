@@ -20,6 +20,7 @@ export interface Person {
   birth_place: string | null;
   death_place: string | null;
   gender: string | null;
+  biography: string | null;
 }
 
 export interface Memorial {
