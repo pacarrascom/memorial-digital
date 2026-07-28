@@ -62,7 +62,8 @@ export function Gallery({ items }: { items: MediaItem[] }) {
               {media.map((m) => (
                 <li key={m.id}>
                   
-                    href={m.storage_path}
+                    <a
+                      href={m.storage_path}
                     className="text-moss-600 underline underline-offset-2 hover:text-moss-800"
                   >
                     {m.caption ?? "Ver archivo"}
@@ -141,7 +142,8 @@ export function Gallery({ items }: { items: MediaItem[] }) {
               {media.map((m) => (
                 <li key={m.id}>
                   
-                    href={m.storage_path}
+                    <a
+                      href={m.storage_path}
                     className="text-moss-600 underline underline-offset-2 hover:text-moss-800"
                   >
                     {m.caption ?? "Ver archivo"}
