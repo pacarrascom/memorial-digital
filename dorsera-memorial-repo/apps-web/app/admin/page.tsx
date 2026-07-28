@@ -76,6 +76,12 @@ export default async function AdminPage() {
                 >
                   Galería
                 </Link>
+                <Link
+                  href={`/admin/memorials/${r.memorial?.id}/timeline`}
+                  className="underline"
+                >
+                  Línea de tiempo
+                </Link>
               </div>
             </li>
           ))}
