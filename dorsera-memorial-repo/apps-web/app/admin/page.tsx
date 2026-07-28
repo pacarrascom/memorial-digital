@@ -59,6 +59,12 @@ export default async function AdminPage() {
                   Ver
                 </Link>
                 <Link
+                  href={`/admin/memorials/${r.memorial?.id}/edit`}
+                  className="underline"
+                >
+                  Editar
+                </Link>
+                <Link
                   href={`/admin/memorials/${r.memorial?.id}/qr`}
                   className="underline"
                 >
