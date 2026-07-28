@@ -16,6 +16,9 @@ export default async function GalleryPage({ params }: PageProps) {
 
   return (
     <div className="mx-auto max-w-2xl">
+      <a href="/admin" className="mb-4 inline-block text-sm text-ink-400 hover:text-ink-700">
+        ← Volver al panel
+      </a>
       <h1 className="mb-8 font-display text-2xl text-ink-900 dark:text-stone-50">
         Galería de fotos
       </h1>

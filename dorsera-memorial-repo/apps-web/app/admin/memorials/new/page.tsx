@@ -35,6 +35,9 @@ export default function NewMemorialPage() {
 
   return (
     <main className="mx-auto max-w-lg px-6 py-16">
+      <a href="/admin" className="mb-4 inline-block text-sm text-ink-400 hover:text-ink-700">
+        ← Volver al panel
+      </a>
       <h1 className="mb-2 font-display text-2xl text-ink-900">Crear un memorial</h1>
       <p className="mb-8 text-sm text-ink-400">
         Solo necesitas el nombre para empezar — puedes completar el resto después.

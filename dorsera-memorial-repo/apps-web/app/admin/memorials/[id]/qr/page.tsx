@@ -25,6 +25,9 @@ export default function MemorialQrPage() {
 
   return (
     <div className="mx-auto max-w-lg">
+      <a href="/admin" className="mb-4 inline-block text-sm text-ink-400 hover:text-ink-700">
+        ← Volver al panel
+      </a>
       <h1 className="mb-8 font-display text-2xl text-ink-900 dark:text-stone-50">
         Código QR del memorial
       </h1>
