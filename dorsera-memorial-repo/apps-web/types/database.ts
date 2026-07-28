@@ -5,7 +5,7 @@
 // mientras no exista aún la conexión al proyecto Supabase real.
 
 export type MemorialVisibility = "public" | "private" | "unlisted";
-export type MediaType = "photo" | "video" | "audio" | "letter" | "document";
+export type MediaType = "foto" | "video" | "audio" | "carta" | "documento";
 export type TributeType = "message" | "candle" | "flower" | "prayer" | "reaction";
 export type TributeStatus = "pending" | "approved" | "rejected";
 export type KinshipType = "parent" | "child" | "spouse" | "sibling";
