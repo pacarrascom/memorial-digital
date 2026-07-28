@@ -35,7 +35,6 @@ export default async function TimelinePage({
     .from('timeline_events')
     .select('*')
     .eq('memorial_id', memorialId)
-    .order('sort_order', { ascending: true })
     .order('event_date', { ascending: true, nullsFirst: false })
     .order('created_at', { ascending: true });
 
