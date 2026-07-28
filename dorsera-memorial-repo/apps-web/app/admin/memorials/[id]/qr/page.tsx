@@ -9,7 +9,7 @@ export default function MemorialQrPage() {
   const memorialId = params.id
 
   const [loading, setLoading] = useState(false)
-  const [result, setResult] = useState
+  const [result, setResult] = useState<
     | { success: true; pngUrl: string; svgUrl: string; shortCode: string; publicUrl: string }
     | { success: false; error: string }
     | null
