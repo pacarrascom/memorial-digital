@@ -70,6 +70,12 @@ export default async function AdminPage() {
                 >
                   QR
                 </Link>
+                <Link
+                  href={`/admin/memorials/${r.memorial?.id}/gallery`}
+                  className="underline"
+                >
+                  Galería
+                </Link>
               </div>
             </li>
           ))}
