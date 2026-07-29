@@ -115,6 +115,13 @@ export function MemorialCard({
               >
                 Línea de tiempo
               </Link>
+              <Link
+                href={`/admin/memorials/${memorialId}/guestbook`}
+                className="block px-4 py-2 text-sm text-ink-700 hover:bg-stone-50"
+                onClick={() => setMenuOpen(false)}
+              >
+                Libro de recuerdos
+              </Link>
             </div>
           )}
         </div>
