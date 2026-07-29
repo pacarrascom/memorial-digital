@@ -1,12 +1,12 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
+import { MemorialCard } from "@/components/admin/MemorialCard";
 
 export default async function AdminPage() {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
-
   const { data: roles } = await supabase
     .from("user_roles")
     .select(
@@ -15,12 +15,12 @@ export default async function AdminPage() {
       memorial:memorials(
         id,
         slug,
+        visibility,
         person_profile(full_name, birth_date, death_date)
       )
     `
     )
     .eq("user_id", user?.id ?? "");
-
   return (
     <div>
       <div className="mb-8 flex items-center justify-between">
@@ -34,7 +34,6 @@ export default async function AdminPage() {
           + Crear memorial
         </Link>
       </div>
-
       {!roles || roles.length === 0 ? (
         <p className="text-ink-400 dark:text-ash-night">
           Aún no tienes memoriales. Crea el primero para empezar.
@@ -42,48 +41,16 @@ export default async function AdminPage() {
       ) : (
         <ul className="space-y-3">
           {roles.map((r: any) => (
-            <li
+            <MemorialCard
               key={r.memorial?.id}
-              className="flex items-center justify-between rounded-lg border border-stone-300 bg-white p-4"
-            >
-              <div>
-                <p className="font-display text-lg text-ink-900">
-                  {r.memorial?.person_profile?.full_name ?? "Sin nombre"}
-                </p>
-                <p className="font-mono text-xs text-ink-400">
-                  {r.role?.name} &middot; /{r.memorial?.slug}
-                </p>
-              </div>
-              <div className="flex gap-3 text-sm">
-                <Link href={`/m/${r.memorial?.slug}`} className="underline">
-                  Ver
-                </Link>
-                <Link
-                  href={`/admin/memorials/${r.memorial?.id}/edit`}
-                  className="underline"
-                >
-                  Editar
-                </Link>
-                <Link
-                  href={`/admin/memorials/${r.memorial?.id}/qr`}
-                  className="underline"
-                >
-                  QR
-                </Link>
-                <Link
-                  href={`/admin/memorials/${r.memorial?.id}/gallery`}
-                  className="underline"
-                >
-                  Galería
-                </Link>
-                <Link
-                  href={`/admin/memorials/${r.memorial?.id}/timeline`}
-                  className="underline"
-                >
-                  Línea de tiempo
-                </Link>
-              </div>
-            </li>
+              memorialId={r.memorial?.id}
+              slug={r.memorial?.slug}
+              fullName={r.memorial?.person_profile?.full_name ?? "Sin nombre"}
+              birthDate={r.memorial?.person_profile?.birth_date ?? null}
+              deathDate={r.memorial?.person_profile?.death_date ?? null}
+              visibility={r.memorial?.visibility ?? "privado"}
+              roleName={r.role?.name ?? ""}
+            />
           ))}
         </ul>
       )}
