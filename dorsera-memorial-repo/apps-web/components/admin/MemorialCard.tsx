@@ -14,9 +14,9 @@ type MemorialCardProps = {
 };
 
 const visibilityLabels: Record<string, { label: string; className: string }> = {
-  publico: { label: 'Público', className: 'bg-moss-100 text-moss-700' },
-  privado: { label: 'Privado', className: 'bg-stone-200 text-ink-600' },
-  solo_invitados: { label: 'Solo invitados', className: 'bg-flame-100 text-flame-700' },
+  publico: { label: 'Público', className: 'bg-moss-600/10 text-moss-800' },
+  privado: { label: 'Privado', className: 'bg-stone-300 text-ink-700' },
+  solo_invitados: { label: 'Solo invitados', className: 'bg-flame-600/10 text-flame-600' },
 };
 
 function getYear(dateStr: string | null) {

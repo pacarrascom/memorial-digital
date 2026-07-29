@@ -13,9 +13,9 @@ type GuestbookEntry = {
 };
 
 const statusStyles: Record<string, string> = {
-  pendiente: 'bg-stone-200 text-ink-600',
-  aprobado: 'bg-moss-100 text-moss-700',
-  rechazado: 'bg-flame-100 text-flame-700',
+  pendiente: 'bg-stone-300 text-ink-700',
+  aprobado: 'bg-moss-600/10 text-moss-800',
+  rechazado: 'bg-flame-600/10 text-flame-600',
 };
 
 const statusLabels: Record<string, string> = {
