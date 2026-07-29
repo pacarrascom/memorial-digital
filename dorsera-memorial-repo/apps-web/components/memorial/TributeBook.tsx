@@ -23,10 +23,10 @@ export function TributeBook({
 
     setStatus("sending");
     const supabase = createClient();
-    const { error } = await supabase.from("tributes").insert({
+    const { error } = await supabase.from("guestbook_entries").insert({
       memorial_id: memorialId,
-      author_name: name.trim() || null,
-      type: "message",
+      author_display_name: name.trim() || null,
+      entry_type: "mensaje",
       content: message.trim(),
     });
 
@@ -92,7 +92,7 @@ export function TributeBook({
             <li key={t.id} className="border-b border-ash pb-6 dark:border-ash-night">
               <p className="text-ink-700 dark:text-stone-100">{t.content}</p>
               <p className="mt-2 font-mono text-xs text-ink-400 dark:text-ash-night">
-                {t.author_name ?? "Anónimo"} ·{" "}
+                {t.author_display_name ?? "Anónimo"} ·{" "}
                 {new Date(t.created_at).toLocaleDateString("es", {
                   year: "numeric",
                   month: "short",

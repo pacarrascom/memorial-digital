@@ -7,7 +7,7 @@
 export type MemorialVisibility = "public" | "private" | "unlisted";
 export type MediaType = "foto" | "video" | "audio" | "carta" | "documento";
 export type TributeType = "message" | "candle" | "flower" | "prayer" | "reaction";
-export type TributeStatus = "pending" | "approved" | "rejected";
+export type TributeStatus = "pendiente" | "aprobado" | "rechazado";
 export type KinshipType = "parent" | "child" | "spouse" | "sibling";
 export type FamilyRole = "family_admin" | "family_collaborator";
 
@@ -90,12 +90,13 @@ export interface TimelineEvent {
 export interface Tribute {
   id: string;
   memorial_id: string;
-  author_id: string | null;
-  author_name: string | null;
-  type: TributeType;
-  content: string | null;
-  photo_url: string | null;
-  status: TributeStatus;
+  author_user_id: string | null;
+  author_display_name: string | null;
+  entry_type: string;
+  content: string;
+  moderation_status: TributeStatus;
+  moderated_by: string | null;
+  moderated_at: string | null;
   created_at: string;
 }
 

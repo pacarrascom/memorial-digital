@@ -70,7 +70,7 @@ export default async function MemorialPage({ params }: PageProps) {
 
   if (!memorial) notFound();
 
-  const approvedTributes = (memorial.tributes ?? []).filter((t) => t.status === "approved");
+  const approvedTributes = (memorial.tributes ?? []).filter((t) => t.moderation_status === "aprobado");
   const sortedEvents = [...(memorial.timeline_events ?? [])].sort(
     (a, b) => new Date(a.event_date).getTime() - new Date(b.event_date).getTime()
   );
