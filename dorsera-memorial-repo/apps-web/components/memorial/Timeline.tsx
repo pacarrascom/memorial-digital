@@ -26,8 +26,8 @@ export function Timeline({ events }: { events: TimelineEvent[] }) {
             <h3 className="mt-1 font-display text-lg text-ink-900 dark:text-stone-50">
               {event.title}
             </h3>
-            {event.location && (
-              <p className="text-sm text-ink-400 dark:text-ash-night">{event.location}</p>
+            {event.location?.nombre && (
+              <p className="text-sm text-ink-400 dark:text-ash-night">{event.location.nombre}</p>
             )}
             {event.description && (
               <p className="mt-2 max-w-xl text-ink-700 dark:text-stone-100">

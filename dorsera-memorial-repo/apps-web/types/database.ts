@@ -81,7 +81,7 @@ export interface TimelineEvent {
   event_date: string;
   title: string;
   description: string | null;
-  location: string | null;
+  location: { nombre?: string } | null;
   cover_media_id: string | null;
   sort_order: number;
   media_assets?: MediaItem[];
