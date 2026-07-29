@@ -5,7 +5,6 @@ import {
   createTimelineEvent,
   updateTimelineEvent,
   deleteTimelineEvent,
-  reorderTimelineEvent,
 } from '@/lib/actions/timeline';
 
 type TimelineEvent = {
@@ -82,17 +81,6 @@ export function TimelineManager({
     });
   }
 
-  function handleReorder(eventId: string, direction: 'up' | 'down') {
-    startTransition(async () => {
-      const result = await reorderTimelineEvent(eventId, memorialId, direction);
-      if (result?.error) {
-        setError(result.error);
-        return;
-      }
-      window.location.reload();
-    });
-  }
-
   return (
     <div className="space-y-4">
       {error && (
@@ -126,7 +114,7 @@ export function TimelineManager({
       )}
 
       <ol className="space-y-3">
-        {events.map((event, index) => (
+        {events.map((event) => (
           <li
             key={event.id}
             className="rounded-lg border border-stone-200 bg-white p-4 shadow-sm"
@@ -152,43 +140,23 @@ export function TimelineManager({
               </div>
 
               {canEdit && (
-                <div className="flex shrink-0 flex-col items-end gap-1">
-                  <div className="flex gap-1">
-                    <button
-                      onClick={() => handleReorder(event.id, 'up')}
-                      disabled={index === 0 || isPending}
-                      className="rounded p-1 text-ink-400 hover:bg-stone-100 disabled:opacity-30"
-                      aria-label="Mover arriba"
-                    >
-                      ↑
-                    </button>
-                    <button
-                      onClick={() => handleReorder(event.id, 'down')}
-                      disabled={index === events.length - 1 || isPending}
-                      className="rounded p-1 text-ink-400 hover:bg-stone-100 disabled:opacity-30"
-                      aria-label="Mover abajo"
-                    >
-                      ↓
-                    </button>
-                  </div>
-                  <div className="flex gap-2 text-xs">
-                    <button
-                      onClick={() => {
-                        setEditingEvent(event);
-                        setIsFormOpen(true);
-                      }}
-                      className="text-ink-500 hover:text-ink-700 hover:underline"
-                    >
-                      Editar
-                    </button>
-                    <button
-                      onClick={() => handleDelete(event.id)}
-                      disabled={isPending}
-                      className="text-flame-600 hover:text-flame-700 hover:underline"
-                    >
-                      Eliminar
-                    </button>
-                  </div>
+                <div className="flex shrink-0 gap-2 text-xs">
+                  <button
+                    onClick={() => {
+                      setEditingEvent(event);
+                      setIsFormOpen(true);
+                    }}
+                    className="text-ink-500 hover:text-ink-700 hover:underline"
+                  >
+                    Editar
+                  </button>
+                  <button
+                    onClick={() => handleDelete(event.id)}
+                    disabled={isPending}
+                    className="text-flame-600 hover:text-flame-700 hover:underline"
+                  >
+                    Eliminar
+                  </button>
                 </div>
               )}
             </div>
