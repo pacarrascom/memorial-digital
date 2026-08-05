@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
+import { MoreVertical } from 'lucide-react';
 
 type MemorialCardProps = {
   memorialId: string;
@@ -85,11 +86,7 @@ export function MemorialCard({
             aria-expanded={menuOpen}
             className="rounded-md p-1.5 text-ink-500 hover:bg-stone-100"
           >
-            <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-              <circle cx="10" cy="4" r="1.5" />
-              <circle cx="10" cy="10" r="1.5" />
-              <circle cx="10" cy="16" r="1.5" />
-            </svg>
+            <MoreVertical size={18} strokeWidth={1.75} aria-hidden="true" />
           </button>
 
           {menuOpen && (
