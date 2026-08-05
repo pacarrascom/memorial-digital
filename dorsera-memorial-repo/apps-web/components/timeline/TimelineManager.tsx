@@ -184,7 +184,7 @@ function EventForm({
       className="space-y-3 rounded-lg border border-stone-200 bg-white p-4 shadow-sm"
     >
       <h3 className="font-display text-base text-ink-900">
-        {event ? 'Editar evento' : 'Nuevo evento'}
+        {event ? 'Editar este momento' : 'Agregar un momento'}
       </h3>
 
       <div>
@@ -204,7 +204,7 @@ function EventForm({
           name="title"
           required
           defaultValue={event?.title ?? ''}
-          placeholder="Ej: Nacimiento, Matrimonio, Graduación..."
+          placeholder="¿Qué pasó?"
           className="w-full rounded-md border border-stone-300 px-3 py-2 text-sm text-ink-900"
         />
       </div>

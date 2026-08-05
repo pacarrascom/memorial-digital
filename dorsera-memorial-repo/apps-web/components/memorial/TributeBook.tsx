@@ -8,9 +8,11 @@ import { CandleButton } from "./CandleButton";
 export function TributeBook({
   memorialId,
   initialTributes,
+  personName,
 }: {
   memorialId: string;
   initialTributes: Tribute[];
+  personName?: string;
 }) {
   const [tributes] = useState(initialTributes);
   const [name, setName] = useState("");
@@ -58,7 +60,11 @@ export function TributeBook({
         <textarea
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          placeholder="Comparte un recuerdo, una anécdota o unas palabras..."
+          placeholder={
+            personName
+              ? `Cuéntanos algo que siempre recordarás de ${personName}...`
+              : "Comparte un recuerdo, una anécdota o unas palabras..."
+          }
           rows={4}
           required
           className="w-full rounded-lg border border-ash bg-transparent px-4 py-2 text-sm dark:border-ash-night"
@@ -72,7 +78,7 @@ export function TributeBook({
         </button>
         {status === "sent" && (
           <p className="text-sm text-moss-600" role="status">
-            Gracias. Tu mensaje quedará visible una vez que la familia lo revise.
+            Gracias por compartir esto. La familia lo leerá pronto, y tu recuerdo se sumará a los de quienes también lo aman.
           </p>
         )}
         {status === "error" && (

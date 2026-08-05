@@ -61,13 +61,13 @@ export default async function AdminPage() {
           href="/admin/memorials/new"
           className="rounded-lg bg-ink-900 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-ink-700"
         >
-          + Crear memorial
+          + Comenzar un memorial
         </Link>
       </div>
 
       {!roles || roles.length === 0 ? (
         <p className="text-ink-400 dark:text-ash-night">
-          Aún no tienes memoriales. Crea el primero para empezar.
+          Cuando estés listo, puedes crear el primer espacio para honrar a alguien que amas.
         </p>
       ) : (
         <ul className="space-y-3">

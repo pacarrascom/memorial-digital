@@ -109,7 +109,11 @@ export default async function MemorialPage({ params }: PageProps) {
 
       <Timeline events={sortedEvents} />
       <Gallery items={memorial.media_items ?? []} />
-      <TributeBook memorialId={memorial.id} initialTributes={approvedTributes} />
+      <TributeBook
+        memorialId={memorial.id}
+        initialTributes={approvedTributes}
+        personName={memorial.person?.full_name}
+      />
     </main>
   );
 }

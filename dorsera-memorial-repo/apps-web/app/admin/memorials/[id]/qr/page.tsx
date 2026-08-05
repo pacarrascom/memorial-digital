@@ -31,6 +31,7 @@ export default function MemorialQrPage() {
       <h1 className="mb-8 font-display text-2xl text-ink-900 dark:text-stone-50">
         Código QR del memorial
       </h1>
+      <p className="mb-6 -mt-6 text-sm text-ink-500">El puente hacia su historia</p>
 
       <button
         onClick={handleGenerate}
