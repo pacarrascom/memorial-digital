@@ -51,6 +51,14 @@ export default async function AdminPage() {
     orgMemorials = data ?? [];
   }
 
+  const { data: pendingRequests } = await supabase
+    .from("organizations")
+    .select("id, name")
+    .eq("requested_by", user?.id ?? "")
+    .eq("status", "pendiente");
+
+  const { data: isSuperAdmin } = await supabase.rpc("is_super_admin");
+
   return (
     <div>
       <div className="mb-8 flex items-center justify-between">
@@ -64,6 +72,28 @@ export default async function AdminPage() {
           + Comenzar un memorial
         </Link>
       </div>
+
+      {isSuperAdmin && (
+        <Link
+          href="/admin/super/organizations"
+          className="mb-6 inline-block text-sm text-ink-500 underline hover:text-ink-700"
+        >
+          Panel de solicitudes de funerarias
+        </Link>
+      )}
+
+      {pendingRequests && pendingRequests.length > 0 && (
+        <div className="mb-6 space-y-2">
+          {pendingRequests.map((r: any) => (
+            <div
+              key={r.id}
+              className="rounded-lg border border-stone-300 bg-stone-100 px-4 py-3 text-sm text-ink-600"
+            >
+              Tu solicitud para <strong>{r.name}</strong> está en revisión.
+            </div>
+          ))}
+        </div>
+      )}
 
       {!roles || roles.length === 0 ? (
         <p className="text-ink-400 dark:text-ash-night">
@@ -88,16 +118,24 @@ export default async function AdminPage() {
 
       {organizations.map((org: any) => (
         <div key={org.id} className="mt-10">
-          <div className="mb-4 flex items-center justify-between">
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
             <h2 className="font-display text-xl text-ink-900 dark:text-stone-50">
               {org.name}
             </h2>
-            <Link
-              href={`/admin/organizations/${org.id}/memorials/new`}
-              className="rounded-lg border border-ink-900 px-4 py-2 text-sm font-medium text-ink-900 transition hover:bg-stone-100"
-            >
-              + Crear memorial para {org.name}
-            </Link>
+            <div className="flex gap-2">
+              <Link
+                href={`/admin/organizations/${org.id}/memorials/bulk`}
+                className="rounded-lg border border-stone-300 px-4 py-2 text-sm font-medium text-ink-700 transition hover:bg-stone-100"
+              >
+                Carga masiva (CSV)
+              </Link>
+              <Link
+                href={`/admin/organizations/${org.id}/memorials/new`}
+                className="rounded-lg border border-ink-900 px-4 py-2 text-sm font-medium text-ink-900 transition hover:bg-stone-100"
+              >
+                + Crear memorial
+              </Link>
+            </div>
           </div>
 
           {orgMemorials.length === 0 ? (
@@ -122,6 +160,16 @@ export default async function AdminPage() {
           )}
         </div>
       ))}
+
+      {organizations.length === 0 && (!pendingRequests || pendingRequests.length === 0) && (
+        <p className="mt-10 text-sm text-ink-400">
+          ¿Eres una funeraria?{" "}
+          <Link href="/admin/organizations/request" className="underline hover:text-ink-700">
+            Solicita una cuenta institucional
+          </Link>
+          .
+        </p>
+      )}
     </div>
   );
 }
