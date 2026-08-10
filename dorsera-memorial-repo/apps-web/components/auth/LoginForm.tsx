@@ -1,12 +1,15 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import Link from 'next/link'
 
 export function LoginForm() {
   const router = useRouter()
   const supabase = createClient()
+  const searchParams = useSearchParams()
+  const next = searchParams.get('next') || '/admin'
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -35,7 +38,7 @@ export function LoginForm() {
     }
 
     router.refresh()
-    router.push('/admin')
+    router.push(next)
   }
 
   return (
@@ -91,6 +94,15 @@ export function LoginForm() {
       >
         {loading ? 'Ingresando…' : 'Iniciar sesión'}
       </button>
+      <p className="text-center text-sm text-ink-500">
+        ¿No tienes cuenta?{' '}
+        <Link
+          href={next !== '/admin' ? `/register?next=${encodeURIComponent(next)}` : '/register'}
+          className="font-medium text-ink-900 underline"
+        >
+          Crea una
+        </Link>
+      </p>
     </form>
   )
 }

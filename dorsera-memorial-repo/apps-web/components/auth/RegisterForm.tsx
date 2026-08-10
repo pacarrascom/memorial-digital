@@ -1,12 +1,15 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import Link from 'next/link'
 
 export function RegisterForm() {
   const router = useRouter()
   const supabase = createClient()
+  const searchParams = useSearchParams()
+  const next = searchParams.get('next') || '/admin'
 
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
@@ -25,7 +28,7 @@ export function RegisterForm() {
       password,
       options: {
         data: { full_name: fullName },
-        emailRedirectTo: `${window.location.origin}/admin`,
+        emailRedirectTo: `${window.location.origin}${next}`,
       },
     })
 
@@ -127,6 +130,15 @@ export function RegisterForm() {
       >
         {loading ? 'Creando cuenta…' : 'Crear cuenta'}
       </button>
+      <p className="text-center text-sm text-ink-500">
+        ¿Ya tienes cuenta?{' '}
+        <Link
+          href={next !== '/admin' ? `/login?next=${encodeURIComponent(next)}` : '/login'}
+          className="font-medium text-ink-900 underline"
+        >
+          Inicia sesión
+        </Link>
+      </p>
     </form>
   )
 }

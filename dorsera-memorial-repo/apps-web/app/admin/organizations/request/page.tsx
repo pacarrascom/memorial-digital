@@ -7,7 +7,7 @@ export default async function RequestOrganizationPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) {
-    redirect('/login');
+    redirect('/login?next=/admin/organizations/request');
   }
 
   return (
