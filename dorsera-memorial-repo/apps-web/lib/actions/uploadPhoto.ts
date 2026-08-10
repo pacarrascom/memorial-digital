@@ -36,6 +36,27 @@ export async function uploadMemorialPhoto(
     return { success: false, error: 'No tienes permiso para subir fotos a este memorial.' }
   }
 
+  const FREE_PHOTO_LIMIT = 10
+
+  const { count: photoCount } = await supabase
+    .from('media_assets')
+    .select('id', { count: 'exact', head: true })
+    .eq('memorial_id', memorialId)
+    .eq('type', 'foto')
+
+  const { data: entitlement } = await supabase
+    .from('memorial_entitlements')
+    .select('photos_unlimited')
+    .eq('memorial_id', memorialId)
+    .maybeSingle()
+
+  if (!entitlement?.photos_unlimited && (photoCount ?? 0) >= FREE_PHOTO_LIMIT) {
+    return {
+      success: false,
+      error: `Este memorial ya tiene ${FREE_PHOTO_LIMIT} fotos gratis. Desbloquea fotos ilimitadas para agregar más.`,
+    }
+  }
+
   const file = formData.get('file') as File | null
   if (!file) {
     return { success: false, error: 'No se recibió ningún archivo.' }
