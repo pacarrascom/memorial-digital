@@ -1,6 +1,7 @@
 'use client';
  
 import { useState, useTransition } from 'react';
+import Link from 'next/link';
 import { approveOrganization, rejectOrganization } from '@/lib/actions/organization-request';
  
 type OrgRequest = {
@@ -98,7 +99,12 @@ export function OrganizationApprovalList({ initialRequests }: { initialRequests:
               >
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <p className="text-sm font-medium text-ink-900">{r.name}</p>
+                    <Link
+                      href={`/admin/super/organizations/${r.id}`}
+                      className="text-sm font-medium text-ink-900 underline"
+                    >
+                      {r.name}
+                    </Link>
                     <div className="mt-0.5 space-y-0.5 text-xs text-ink-400">
                       {r.rut && <p>RUT: {r.rut}</p>}
                       {r.contact_email && <p>{r.contact_email}</p>}

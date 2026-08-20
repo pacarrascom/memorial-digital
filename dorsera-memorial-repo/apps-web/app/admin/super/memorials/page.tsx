@@ -57,8 +57,18 @@ export default async function SuperAdminMemorialsPage() {
                   {m.person_profile?.full_name ?? 'Sin nombre'}
                 </p>
                 <p className="font-mono text-xs text-ink-400">
-                  /{m.slug} · {m.organizations?.name ?? 'Individual'} ·{' '}
-                  {new Date(m.created_at).toLocaleDateString('es-CL')}
+                  /{m.slug} ·{' '}
+                  {m.organization_id ? (
+                    <Link
+                      href={`/admin/super/organizations/${m.organization_id}`}
+                      className="underline"
+                    >
+                      {m.organizations?.name ?? 'Organización'}
+                    </Link>
+                  ) : (
+                    'Individual'
+                  )}{' '}
+                  · {new Date(m.created_at).toLocaleDateString('es-CL')}
                 </p>
               </div>
               <div className="flex shrink-0 items-center gap-3 text-sm">
