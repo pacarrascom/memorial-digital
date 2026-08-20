@@ -58,6 +58,7 @@ export default async function AdminPage() {
     .eq("status", "pendiente");
 
   const { data: isSuperAdmin } = await supabase.rpc("is_super_admin");
+  const isFuneraria = user?.user_metadata?.account_type === "funeraria";
 
   return (
     <div>
@@ -65,12 +66,14 @@ export default async function AdminPage() {
         <h1 className="font-display text-2xl text-ink-900 dark:text-stone-50">
           Tus memoriales
         </h1>
-        <Link
+        {!isFuneraria && (
+          <Link
           href="/admin/memorials/new"
           className="rounded-lg bg-ink-900 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-ink-700"
         >
           + Comenzar un memorial
         </Link>
+        )}
       </div>
 
       {isSuperAdmin && (

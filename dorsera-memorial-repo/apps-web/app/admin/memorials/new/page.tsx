@@ -1,19 +1,30 @@
 'use client'
-
-import { useState } from 'react'
+ 
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createMemorial } from '@/lib/actions/memorial'
-
+import { createClient } from '@/lib/supabase/client'
+ 
 export default function NewMemorialPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-
+  const [checkingAccount, setCheckingAccount] = useState(true)
+  const [isFuneraria, setIsFuneraria] = useState(false)
+ 
+  useEffect(() => {
+    const supabase = createClient()
+    supabase.auth.getUser().then(({ data }) => {
+      setIsFuneraria(data.user?.user_metadata?.account_type === 'funeraria')
+      setCheckingAccount(false)
+    })
+  }, [])
+ 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setError(null)
     setLoading(true)
-
+ 
     const formData = new FormData(e.currentTarget)
     const result = await createMemorial({
       fullName: formData.get('full_name') as string,
@@ -22,17 +33,36 @@ export default function NewMemorialPage() {
       birthPlace: (formData.get('birth_place') as string) || undefined,
       biography: (formData.get('biography') as string) || undefined,
     })
-
+ 
     setLoading(false)
-
+ 
     if (!result.success) {
       setError(result.error)
       return
     }
-
+ 
     router.push(`/m/${result.slug}`)
   }
-
+ 
+  if (checkingAccount) {
+    return null
+  }
+ 
+  if (isFuneraria) {
+    return (
+      <main className="mx-auto max-w-lg px-6 py-16">
+        <a href="/admin" className="mb-4 inline-block text-sm text-ink-400 hover:text-ink-700">
+          ← Volver al panel
+        </a>
+        <h1 className="mb-2 font-display text-2xl text-ink-900">Cuenta institucional</h1>
+        <p className="text-sm text-ink-600">
+          Tu cuenta es de tipo funeraria. Crea memoriales desde el panel de tu organización
+          en /admin, no como memorial individual.
+        </p>
+      </main>
+    )
+  }
+ 
   return (
     <main className="mx-auto max-w-lg px-6 py-16">
       <a href="/admin" className="mb-4 inline-block text-sm text-ink-400 hover:text-ink-700">
@@ -42,7 +72,7 @@ export default function NewMemorialPage() {
       <p className="mb-8 text-sm text-ink-400">
         Solo necesitas el nombre para empezar — puedes completar el resto después.
       </p>
-
+ 
       <form onSubmit={handleSubmit} className="space-y-5">
         <div className="space-y-1.5">
           <label htmlFor="full_name" className="block text-sm font-medium text-stone-700">
@@ -57,7 +87,7 @@ export default function NewMemorialPage() {
             placeholder="María González"
           />
         </div>
-
+ 
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-1.5">
             <label htmlFor="birth_date" className="block text-sm font-medium text-stone-700">
@@ -82,7 +112,7 @@ export default function NewMemorialPage() {
             />
           </div>
         </div>
-
+ 
         <div className="space-y-1.5">
           <label htmlFor="birth_place" className="block text-sm font-medium text-stone-700">
             Lugar de nacimiento
@@ -95,7 +125,7 @@ export default function NewMemorialPage() {
             placeholder="Santiago, Chile"
           />
         </div>
-
+ 
         <div className="space-y-1.5">
           <label htmlFor="biography" className="block text-sm font-medium text-stone-700">
             Biografía breve
@@ -108,13 +138,13 @@ export default function NewMemorialPage() {
             placeholder="Una vida dedicada a..."
           />
         </div>
-
+ 
         {error && (
           <p role="alert" className="text-sm text-flame-600">
             {error}
           </p>
         )}
-
+ 
         <button
           type="submit"
           disabled={loading}

@@ -1,37 +1,37 @@
 'use client'
-
+ 
 import { useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
-
+ 
 type AccountType = 'natural' | 'funeraria'
-
+ 
 export function RegisterForm() {
   const router = useRouter()
   const supabase = createClient()
   const searchParams = useSearchParams()
   const next = searchParams.get('next') || '/admin'
-
+ 
   const [accountType, setAccountType] = useState<AccountType>('natural')
-
+ 
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-
+ 
   const [funerariaName, setFunerariaName] = useState('')
   const [funerariaRut, setFunerariaRut] = useState('')
   const [funerariaContactEmail, setFunerariaContactEmail] = useState('')
   const [funerariaContactPhone, setFunerariaContactPhone] = useState('')
-
+ 
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
   const [loading, setLoading] = useState(false)
-
+ 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setError(null)
-
+ 
     if (accountType === 'funeraria') {
       if (
         !funerariaName.trim() ||
@@ -43,9 +43,9 @@ export function RegisterForm() {
         return
       }
     }
-
+ 
     setLoading(true)
-
+ 
     const { error } = await supabase.auth.signUp({
       email,
       password,
@@ -62,12 +62,12 @@ export function RegisterForm() {
               }
             : {}),
         },
-        emailRedirectTo: `${window.location.origin}${next}`,
+        emailRedirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
       },
     })
-
+ 
     setLoading(false)
-
+ 
     if (error) {
       setError(
         error.message.includes('already registered')
@@ -76,10 +76,10 @@ export function RegisterForm() {
       )
       return
     }
-
+ 
     setSuccess(true)
   }
-
+ 
   if (success) {
     return (
       <div className="w-full max-w-sm space-y-3 rounded-lg border border-moss-200 bg-moss-50 p-5 text-center">
@@ -92,7 +92,7 @@ export function RegisterForm() {
       </div>
     )
   }
-
+ 
   return (
     <form onSubmit={handleSubmit} className="w-full max-w-sm space-y-5">
       <div className="flex gap-2 rounded-lg border border-stone-300 bg-stone-100 p-1">
@@ -115,7 +115,7 @@ export function RegisterForm() {
           Funeraria
         </button>
       </div>
-
+ 
       <div className="space-y-1.5">
         <label htmlFor="fullName" className="block text-sm font-medium text-stone-700">
           Nombre completo
@@ -131,7 +131,7 @@ export function RegisterForm() {
           placeholder="María González"
         />
       </div>
-
+ 
       <div className="space-y-1.5">
         <label htmlFor="email" className="block text-sm font-medium text-stone-700">
           Correo electrónico
@@ -147,7 +147,7 @@ export function RegisterForm() {
           placeholder="tu@correo.com"
         />
       </div>
-
+ 
       <div className="space-y-1.5">
         <label htmlFor="password" className="block text-sm font-medium text-stone-700">
           Contraseña
@@ -164,13 +164,13 @@ export function RegisterForm() {
           placeholder="Mínimo 8 caracteres"
         />
       </div>
-
+ 
       {accountType === 'funeraria' && (
         <div className="space-y-4 rounded-lg border border-stone-200 bg-stone-50 p-4">
           <p className="text-xs font-medium uppercase tracking-wide text-ink-500">
             Datos de la funeraria
           </p>
-
+ 
           <div className="space-y-1.5">
             <label htmlFor="funerariaName" className="block text-sm font-medium text-stone-700">
               Nombre de la funeraria
@@ -185,7 +185,7 @@ export function RegisterForm() {
               placeholder="Funeraria San José"
             />
           </div>
-
+ 
           <div className="space-y-1.5">
             <label htmlFor="funerariaRut" className="block text-sm font-medium text-stone-700">
               RUT de la funeraria
@@ -200,7 +200,7 @@ export function RegisterForm() {
               placeholder="76.123.456-7"
             />
           </div>
-
+ 
           <div className="space-y-1.5">
             <label htmlFor="funerariaContactEmail" className="block text-sm font-medium text-stone-700">
               Correo de contacto
@@ -215,7 +215,7 @@ export function RegisterForm() {
               placeholder="contacto@funeraria.cl"
             />
           </div>
-
+ 
           <div className="space-y-1.5">
             <label htmlFor="funerariaContactPhone" className="block text-sm font-medium text-stone-700">
               Teléfono de contacto
@@ -232,13 +232,13 @@ export function RegisterForm() {
           </div>
         </div>
       )}
-
+ 
       {error && (
         <p role="alert" className="text-sm text-flame-600">
           {error}
         </p>
       )}
-
+ 
       <button
         type="submit"
         disabled={loading}
