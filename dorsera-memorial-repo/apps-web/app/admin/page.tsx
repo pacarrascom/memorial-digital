@@ -106,7 +106,8 @@ export default async function AdminPage() {
         </div>
       )}
 
-      {!roles || roles.length === 0 ? (
+      {!isFuneraria && (
+        !roles || roles.length === 0 ? (
         <p className="text-ink-400 dark:text-ash-night">
           Cuando estés listo, puedes crear el primer espacio para honrar a alguien que amas.
         </p>
@@ -125,6 +126,7 @@ export default async function AdminPage() {
             />
           ))}
         </ul>
+      )
       )}
 
       {organizations.map((org: any) => (
