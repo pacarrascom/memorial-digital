@@ -77,12 +77,20 @@ export default async function AdminPage() {
       </div>
 
       {isSuperAdmin && (
-        <Link
-          href="/admin/super/organizations"
-          className="mb-6 inline-block text-sm text-ink-500 underline hover:text-ink-700"
-        >
-          Panel de solicitudes de funerarias
-        </Link>
+        <div className="mb-6 flex flex-wrap gap-4">
+          <Link
+            href="/admin/super/organizations"
+            className="text-sm text-ink-500 underline hover:text-ink-700"
+          >
+            Panel de solicitudes de funerarias
+          </Link>
+          <Link
+            href="/admin/super/memorials"
+            className="text-sm text-ink-500 underline hover:text-ink-700"
+          >
+            Ver todos los memoriales
+          </Link>
+        </div>
       )}
 
       {pendingRequests && pendingRequests.length > 0 && (
