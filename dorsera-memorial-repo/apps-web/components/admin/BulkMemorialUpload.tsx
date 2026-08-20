@@ -5,7 +5,7 @@ import Papa from 'papaparse';
 import Link from 'next/link';
 import { bulkCreateMemorialsForOrg, type BulkMemorialRow, type BulkResult } from '@/lib/actions/bulk-memorials';
 
-const TEMPLATE_CSV = 'full_name,birth_date,death_date,birth_place,biography\nMaría González,1945-03-12,2024-01-08,Santiago,Una vida dedicada a su familia\n';
+const TEMPLATE_CSV = 'full_name,birth_date,death_date,birth_place,biography,family_contact_name,family_contact_email,family_contact_phone\nMaría González,1945-03-12,2024-01-08,Santiago,Una vida dedicada a su familia,Juan Pérez,juan@correo.com,+56912345678\n';
 
 export function BulkMemorialUpload({
   organizationId,
@@ -59,6 +59,9 @@ export function BulkMemorialUpload({
             death_date: String(row.death_date || '').trim(),
             birth_place: String(row.birth_place || '').trim(),
             biography: String(row.biography || '').trim(),
+            family_contact_name: String(row.family_contact_name || '').trim(),
+            family_contact_email: String(row.family_contact_email || '').trim(),
+            family_contact_phone: String(row.family_contact_phone || '').trim(),
           }))
           .filter((row) => row.full_name);
 

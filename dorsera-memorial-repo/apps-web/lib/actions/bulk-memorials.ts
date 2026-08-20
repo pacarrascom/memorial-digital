@@ -9,6 +9,9 @@ export type BulkMemorialRow = {
   death_date?: string;
   birth_place?: string;
   biography?: string;
+  family_contact_name?: string;
+  family_contact_email?: string;
+  family_contact_phone?: string;
 };
 
 export type BulkResult = {

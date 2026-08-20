@@ -32,7 +32,7 @@ export default async function OrganizationDetailPage({
  
   const { data: memorials } = await supabase
     .from('memorials')
-    .select('id, slug, visibility, created_at, person_profile(full_name)')
+    .select('id, slug, visibility, created_at, family_contact_name, family_contact_email, person_profile(full_name)')
     .eq('organization_id', orgId)
     .order('created_at', { ascending: false });
  
@@ -161,12 +161,20 @@ export default async function OrganizationDetailPage({
             {memorials.map((m: any) => (
               <li
                 key={m.id}
-                className="flex items-center justify-between rounded-lg border border-stone-200 bg-white p-3 text-sm"
+                className="rounded-lg border border-stone-200 bg-white p-3 text-sm"
               >
-                <span className="text-ink-900">{m.person_profile?.full_name ?? 'Sin nombre'}</span>
-                <Link href={`/m/${m.slug}`} className="underline">
-                  Ver
-                </Link>
+                <div className="flex items-center justify-between">
+                  <span className="text-ink-900">{m.person_profile?.full_name ?? 'Sin nombre'}</span>
+                  <Link href={`/m/${m.slug}`} className="underline">
+                    Ver
+                  </Link>
+                </div>
+                {(m.family_contact_name || m.family_contact_email) && (
+                  <p className="mt-1 text-xs text-ink-400">
+                    Familiar: {m.family_contact_name ?? '—'}
+                    {m.family_contact_email && ` · ${m.family_contact_email}`}
+                  </p>
+                )}
               </li>
             ))}
           </ul>
