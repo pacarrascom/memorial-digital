@@ -1,18 +1,18 @@
 import Image from "next/image";
 import type { TimelineEvent } from "@/types/database";
-
+ 
 export function Timeline({ events }: { events: TimelineEvent[] }) {
   if (events.length === 0) return null;
-
+ 
   return (
-    <section aria-labelledby="timeline-heading" className="px-8 py-16 md:px-16">
+    <section aria-labelledby="timeline-heading" className="border-t border-ash bg-white px-8 py-14 md:px-16">
       <h2 id="timeline-heading" className="mb-10 text-2xl font-display text-ink-900 dark:text-stone-50">
-        Historia de vida
+        Momentos importantes
       </h2>
-
+ 
       <ol className="relative border-l border-ash dark:border-ash-night">
         {events.map((event) => (
-          <li key={event.id} className="mb-10 ml-6">
+          <li key={event.id} className="mb-10 ml-6 last:mb-0">
             <span
               className="absolute -left-[5px] mt-1.5 h-2.5 w-2.5 rounded-full bg-moss-600"
               aria-hidden="true"

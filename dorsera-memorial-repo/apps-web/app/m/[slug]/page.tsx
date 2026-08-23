@@ -106,9 +106,9 @@ export default async function MemorialPage({ params }: PageProps) {
       <MemorialHero memorial={memorial as unknown as Memorial} />
  
       {memorial.person?.biography && (
-        <section className="px-8 py-10 md:px-16">
+        <section className="border-t border-ash bg-stone-50 px-8 py-14 md:px-16">
           <h2 className="mb-4 text-2xl font-display text-ink-900 dark:text-stone-50">
-            Historia de vida
+            Su historia
           </h2>
           <p className="max-w-2xl whitespace-pre-line text-ink-700 dark:text-stone-100">
             {memorial.person.biography}

@@ -1,6 +1,6 @@
 import Image from "next/image";
 import type { MediaItem } from "@/types/database";
-
+ 
 const typeLabels: Record<string, string> = {
   foto: "Fotografías",
   video: "Videos",
@@ -8,28 +8,31 @@ const typeLabels: Record<string, string> = {
   carta: "Cartas",
   documento: "Documentos",
 };
-
+ 
 export function Gallery({ items }: { items: MediaItem[] }) {
   if (items.length === 0) return null;
   const grouped = items.reduce<Record<string, MediaItem[]>>((acc, item) => {
     (acc[item.type] ??= []).push(item);
     return acc;
   }, {});
-
+ 
   return (
-    <section aria-labelledby="gallery-heading" className="px-8 py-16 md:px-16">
+    <section aria-labelledby="gallery-heading" className="border-t border-ash bg-stone-50 px-8 py-14 md:px-16">
       <h2 id="gallery-heading" className="mb-10 text-2xl font-display text-ink-900 dark:text-stone-50">
         Galería
       </h2>
       {Object.entries(grouped).map(([type, media]) => (
-        <div key={type} className="mb-10">
+        <div key={type} className="mb-10 last:mb-0">
           <h3 className="mb-4 text-sm font-medium uppercase tracking-wide text-ink-400 dark:text-ash-night">
             {typeLabels[type] ?? type}
           </h3>
           {type === "foto" ? (
-            <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+            <div className="flex flex-wrap gap-3">
               {media.map((m) => (
-                <div key={m.id} className="aspect-square overflow-hidden rounded-xl bg-stone-200 dark:bg-ink-700">
+                <div
+                  key={m.id}
+                  className="h-36 w-36 shrink-0 overflow-hidden rounded-xl bg-stone-200 shadow-sm sm:h-44 sm:w-44 dark:bg-ink-700"
+                >
                   <Image
                     src={m.storage_path}
                     alt={m.caption ?? ""}
@@ -61,9 +64,8 @@ export function Gallery({ items }: { items: MediaItem[] }) {
             <ul className="space-y-2">
               {media.map((m) => (
                 <li key={m.id}>
-                  
-                    <a
-                      href={m.storage_path}
+                  <a
+                    href={m.storage_path}
                     className="text-moss-600 underline underline-offset-2 hover:text-moss-800"
                   >
                     {m.caption ?? "Ver archivo"}
