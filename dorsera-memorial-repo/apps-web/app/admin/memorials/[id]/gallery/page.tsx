@@ -1,19 +1,19 @@
 import { createClient } from '@/lib/supabase/server'
 import { GalleryUploadForm } from '@/components/admin/GalleryUploadForm'
-
+ 
 type PageProps = { params: Promise<{ id: string }> }
-
+ 
 export default async function GalleryPage({ params }: PageProps) {
   const { id } = await params
   const supabase = await createClient()
-
+ 
   const { data: photos } = await supabase
     .from('media_assets')
-    .select('id, storage_path, caption')
+    .select('id, storage_path, caption, is_cover')
     .eq('memorial_id', id)
     .eq('type', 'foto')
     .order('uploaded_at', { ascending: false })
-
+ 
   return (
     <div className="mx-auto max-w-2xl">
       <a href="/admin" className="mb-4 inline-block text-sm text-ink-400 hover:text-ink-700">
