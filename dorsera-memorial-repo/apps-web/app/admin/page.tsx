@@ -44,6 +44,9 @@ export default async function AdminPage() {
         id,
         slug,
         visibility,
+        family_contact_name,
+        family_contact_email,
+        family_contact_phone,
         person_profile(full_name, birth_date, death_date)
       `
       )
@@ -167,6 +170,10 @@ export default async function AdminPage() {
                   deathDate={m.person_profile?.death_date ?? null}
                   visibility={m.visibility ?? "privado"}
                   roleName="funeraria"
+                
+                  familyContactName={m.family_contact_name ?? null}
+                  familyContactEmail={m.family_contact_email ?? null}
+                  familyContactPhone={m.family_contact_phone ?? null}
                 />
               ))}
             </ul>

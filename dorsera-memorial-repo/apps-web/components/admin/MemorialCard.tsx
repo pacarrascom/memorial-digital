@@ -1,9 +1,9 @@
 'use client';
-
+ 
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { MoreVertical } from 'lucide-react';
-
+ 
 type MemorialCardProps = {
   memorialId: string;
   slug: string;
@@ -12,19 +12,22 @@ type MemorialCardProps = {
   deathDate: string | null;
   visibility: 'publico' | 'privado' | 'solo_invitados';
   roleName: string;
+  familyContactName?: string | null;
+  familyContactEmail?: string | null;
+  familyContactPhone?: string | null;
 };
-
+ 
 const visibilityLabels: Record<string, { label: string; className: string }> = {
   publico: { label: 'Público', className: 'bg-moss-600/10 text-moss-800' },
   privado: { label: 'Privado', className: 'bg-stone-300 text-ink-700' },
   solo_invitados: { label: 'Solo invitados', className: 'bg-flame-600/10 text-flame-600' },
 };
-
+ 
 function getYear(dateStr: string | null) {
   if (!dateStr) return null;
   return new Date(dateStr + 'T00:00:00').getFullYear();
 }
-
+ 
 export function MemorialCard({
   memorialId,
   slug,
@@ -33,10 +36,13 @@ export function MemorialCard({
   deathDate,
   visibility,
   roleName,
+  familyContactName,
+  familyContactEmail,
+  familyContactPhone,
 }: MemorialCardProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
-
+ 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
       if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
@@ -46,18 +52,19 @@ export function MemorialCard({
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
-
+ 
   const initial = fullName.trim().charAt(0).toUpperCase() || '?';
   const birthYear = getYear(birthDate);
   const deathYear = getYear(deathDate);
   const vis = visibilityLabels[visibility] ?? visibilityLabels.privado;
-
+  const hasFamilyContact = familyContactName || familyContactEmail || familyContactPhone;
+ 
   return (
     <li className="flex items-center gap-4 rounded-lg border border-stone-300 bg-white p-4">
       <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-moss-100 font-display text-lg text-moss-700">
         {initial}
       </div>
-
+ 
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-2">
           <p className="font-display text-lg text-ink-900">{fullName}</p>
@@ -69,8 +76,15 @@ export function MemorialCard({
           {birthYear && deathYear ? `${birthYear} – ${deathYear} · ` : ''}
           {roleName} · /{slug}
         </p>
+        {hasFamilyContact && (
+          <p className="mt-1 text-xs text-ink-500">
+            Familiar: {familyContactName ?? '—'}
+            {familyContactEmail && ` · ${familyContactEmail}`}
+            {familyContactPhone && ` · ${familyContactPhone}`}
+          </p>
+        )}
       </div>
-
+ 
       <div className="flex shrink-0 items-center gap-3 text-sm">
         <Link href={`/m/${slug}`} className="underline">
           Ver
@@ -78,7 +92,7 @@ export function MemorialCard({
         <Link href={`/admin/memorials/${memorialId}/edit`} className="underline">
           Editar
         </Link>
-
+ 
         <div className="relative" ref={menuRef}>
           <button
             onClick={() => setMenuOpen((v) => !v)}
@@ -88,7 +102,7 @@ export function MemorialCard({
           >
             <MoreVertical size={18} strokeWidth={1.75} aria-hidden="true" />
           </button>
-
+ 
           {menuOpen && (
             <div className="absolute right-0 z-10 mt-2 w-44 rounded-lg border border-stone-200 bg-white py-1 shadow-lg">
               <Link
