@@ -12,7 +12,7 @@ export function MemorialHero({ memorial }: { memorial: Memorial }) {
   return (
     <header className="ribbon-of-light relative pl-8 pt-16 pb-12 md:pl-16 md:pt-24">
       {memorial.cover_photo_url && (
-        <div className="mb-8 h-64 w-full overflow-hidden rounded-2xl md:h-96">
+        <div className="mb-8 h-64 w-full overflow-hidden rounded-2xl pr-8 md:h-96 md:pr-16">
           <Image
             src={memorial.cover_photo_url}
             alt={`Fotografía de ${person?.full_name ?? "la persona homenajeada"}`}
