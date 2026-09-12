@@ -13,7 +13,13 @@ export default async function GalleryPage({ params }: PageProps) {
     .eq('memorial_id', id)
     .eq('type', 'foto')
     .order('uploaded_at', { ascending: false })
- 
+
+  const { data: entitlement } = await supabase
+    .from('memorial_entitlements')
+    .select('photos_unlimited')
+    .eq('memorial_id', id)
+    .maybeSingle()
+
   return (
     <div className="mx-auto max-w-2xl">
       <a href="/admin" className="mb-4 inline-block text-sm text-ink-400 hover:text-ink-700">
@@ -22,7 +28,11 @@ export default async function GalleryPage({ params }: PageProps) {
       <h1 className="mb-8 font-display text-2xl text-ink-900 dark:text-stone-50">
         Galería de fotos
       </h1>
-      <GalleryUploadForm memorialId={id} existingPhotos={photos ?? []} />
+      <GalleryUploadForm
+        memorialId={id}
+        existingPhotos={photos ?? []}
+        photosUnlimited={entitlement?.photos_unlimited ?? false}
+      />
     </div>
   )
 }

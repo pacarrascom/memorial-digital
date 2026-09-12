@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { MemorialCard } from "@/components/admin/MemorialCard";
+import { UnlockButton } from "@/components/admin/UnlockButton";
 
 export default async function AdminPage() {
   const supabase = await createClient();
@@ -26,7 +27,7 @@ export default async function AdminPage() {
 
   const { data: orgRoles } = await supabase
     .from("user_roles")
-    .select("organization_id, organizations(id, name)")
+    .select("organization_id, organizations(id, name, subscription_active_until)")
     .eq("user_id", user?.id ?? "")
     .not("organization_id", "is", null);
 
@@ -34,6 +35,7 @@ export default async function AdminPage() {
     .map((r: any) => r.organizations)
     .filter(Boolean);
 
+  let orgCredits: Record<string, number> = {};
   let orgMemorials: any[] = [];
   if (organizations.length > 0) {
     const orgIds = organizations.map((o: any) => o.id);
@@ -52,6 +54,15 @@ export default async function AdminPage() {
       )
       .in("organization_id", orgIds);
     orgMemorials = data ?? [];
+
+    const { data: creditsData } = await supabase
+      .from("organization_credits")
+      .select("organization_id, quantity")
+      .in("organization_id", orgIds);
+    orgCredits = (creditsData ?? []).reduce((acc: Record<string, number>, c: any) => {
+      acc[c.organization_id] = (acc[c.organization_id] ?? 0) + c.quantity;
+      return acc;
+    }, {});
   }
 
   const { data: pendingRequests } = await supabase
@@ -151,6 +162,21 @@ export default async function AdminPage() {
               >
                 + Crear memorial
               </Link>
+            </div>
+          </div>
+
+          <div className="mb-4 rounded-lg border border-stone-200 bg-stone-50 p-4">
+            <p className="text-sm text-ink-600">
+              Suscripción:{" "}
+              {org.subscription_active_until
+                ? `activa hasta ${new Date(org.subscription_active_until).toLocaleDateString("es-CL")}`
+                : "sin suscripción activa"}
+              {" · "}
+              {orgCredits[org.id] ?? 0} cupos disponibles
+            </p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              <UnlockButton type="org_subscription" organizationId={org.id} />
+              <UnlockButton type="org_extra_block" organizationId={org.id} />
             </div>
           </div>
 

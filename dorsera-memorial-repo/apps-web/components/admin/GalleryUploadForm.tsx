@@ -4,15 +4,19 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { uploadMemorialPhoto } from '@/lib/actions/uploadPhoto'
 import { setCoverPhoto } from '@/lib/actions/coverPhoto'
- 
+import { UnlockButton } from '@/components/admin/UnlockButton'
+
 type ExistingPhoto = { id: string; storage_path: string; caption: string | null; is_cover: boolean }
- 
+
+const FREE_PHOTO_LIMIT = 10
+
 type Props = {
   memorialId: string
   existingPhotos: ExistingPhoto[]
+  photosUnlimited: boolean
 }
- 
-export function GalleryUploadForm({ memorialId, existingPhotos }: Props) {
+
+export function GalleryUploadForm({ memorialId, existingPhotos, photosUnlimited }: Props) {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -119,6 +123,11 @@ export function GalleryUploadForm({ memorialId, existingPhotos }: Props) {
           <p className="mb-4 text-xs text-ink-400">
             La foto de portada se muestra en la página pública del memorial.
           </p>
+        )}
+        {!photosUnlimited && existingPhotos.length >= FREE_PHOTO_LIMIT && (
+          <div className="mb-6">
+            <UnlockButton type="individual_fotos" memorialId={memorialId} />
+          </div>
         )}
         {existingPhotos.length === 0 ? (
           <p className="text-sm text-ink-400">Aún no hay fotos.</p>

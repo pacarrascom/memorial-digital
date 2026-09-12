@@ -2,6 +2,9 @@ import { redirect, notFound } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { TimelineManager } from '@/components/timeline/TimelineManager';
+import { UnlockButton } from '@/components/admin/UnlockButton';
+
+const FREE_TIMELINE_LIMIT = 5;
 
 export default async function TimelinePage({
   params,
@@ -38,6 +41,15 @@ export default async function TimelinePage({
     .order('event_date', { ascending: true, nullsFirst: false })
     .order('created_at', { ascending: true });
 
+  const { data: entitlement } = await supabase
+    .from('memorial_entitlements')
+    .select('timeline_unlimited')
+    .eq('memorial_id', memorialId)
+    .maybeSingle();
+
+  const showUnlockTimeline =
+    !entitlement?.timeline_unlimited && (events?.length ?? 0) >= FREE_TIMELINE_LIMIT;
+
   return (
     <main className="min-h-screen bg-stone-50 px-4 py-6 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-2xl">
@@ -52,6 +64,12 @@ export default async function TimelinePage({
           <h1 className="font-display text-2xl text-ink-900">Línea de tiempo</h1>
           <p className="mt-1 text-sm text-ink-500">{person.full_name}</p>
         </div>
+
+        {showUnlockTimeline && (
+          <div className="mb-6">
+            <UnlockButton type="individual_timeline" memorialId={memorialId} />
+          </div>
+        )}
 
         <TimelineManager
           memorialId={memorialId}
