@@ -206,16 +206,6 @@ export default async function AdminPage() {
           )}
         </div>
       ))}
-
-      {organizations.length === 0 && (!pendingRequests || pendingRequests.length === 0) && (
-        <p className="mt-10 text-sm text-ink-400">
-          ¿Eres una funeraria?{" "}
-          <Link href="/admin/organizations/request" className="underline hover:text-ink-700">
-            Solicita una cuenta institucional
-          </Link>
-          .
-        </p>
-      )}
     </div>
   );
 }

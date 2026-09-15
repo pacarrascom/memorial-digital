@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { OrganizationApprovalList } from '@/components/admin/OrganizationApprovalList';
+import { AdminCreateOrganizationForm } from '@/components/admin/AdminCreateOrganizationForm';
  
 export default async function SuperAdminOrganizationsPage() {
   const supabase = await createClient();
@@ -35,6 +36,8 @@ export default async function SuperAdminOrganizationsPage() {
         Solicitudes de funerarias
       </h1>
  
+      <AdminCreateOrganizationForm />
+
       <OrganizationApprovalList initialRequests={requests ?? []} />
     </main>
   );

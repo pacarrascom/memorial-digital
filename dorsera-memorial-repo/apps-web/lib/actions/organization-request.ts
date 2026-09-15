@@ -3,29 +3,37 @@
 import { revalidatePath } from 'next/cache';
 import { createClient } from '@/lib/supabase/server';
 
-export async function requestOrganization(name: string, contactEmail: string) {
+export async function adminCreateOrganization(
+  userEmail: string,
+  name: string,
+  rut: string,
+  contactEmail: string,
+  contactPhone: string
+) {
   const supabase = await createClient();
 
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) {
-    return { error: 'No autenticado.' };
+  if (!userEmail.trim() || !name.trim()) {
+    return { error: 'El correo del usuario y el nombre de la funeraria son obligatorios.' };
   }
 
-  if (!name.trim()) {
-    return { error: 'El nombre de la funeraria es obligatorio.' };
-  }
-
-  const { error } = await supabase.rpc('request_organization', {
-    p_name: name,
-    p_contact_email: contactEmail || null,
+  const { error } = await supabase.rpc('admin_create_organization', {
+    p_user_email: userEmail.trim(),
+    p_name: name.trim(),
+    p_rut: rut.trim() || null,
+    p_contact_email: contactEmail.trim() || null,
+    p_contact_phone: contactPhone.trim() || null,
   });
 
   if (error) {
-    console.error('requestOrganization error:', error);
-    return { error: 'No se pudo enviar la solicitud. Intenta de nuevo.' };
+    console.error('adminCreateOrganization error:', error);
+    return {
+      error: error.message.includes('No existe un usuario')
+        ? 'No existe ningún usuario registrado con ese correo.'
+        : 'No se pudo crear la cuenta de funeraria. Verifica que tengas permisos de administrador.',
+    };
   }
 
-  revalidatePath('/admin');
+  revalidatePath('/admin/super/organizations');
   return { success: true };
 }
 

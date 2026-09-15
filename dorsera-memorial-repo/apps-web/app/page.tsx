@@ -297,10 +297,10 @@ export default async function HomePage() {
               </div>
 
               <Link
-                href="/admin/organizations/request"
+                href="/register"
                 className="mt-6 block rounded-lg border border-ink-900 px-4 py-2.5 text-center text-sm font-medium text-ink-900 transition hover:bg-stone-100"
               >
-                Solicitar cuenta institucional
+                Crear cuenta institucional
               </Link>
             </div>
           </div>
@@ -350,7 +350,7 @@ export default async function HomePage() {
             <Link href="/login" className="hover:text-ink-700">Ingresar</Link>
             <Link href="/register" className="hover:text-ink-700">Crear cuenta</Link>
             <Link href="/m/maria-gonzalez-test" className="hover:text-ink-700">Ejemplo</Link>
-            <Link href="/admin/organizations/request" className="hover:text-ink-700">Funerarias</Link>
+            <Link href="/register" className="hover:text-ink-700">Funerarias</Link>
           </nav>
         </div>
       </footer>
