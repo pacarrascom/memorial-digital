@@ -133,6 +133,13 @@ export function MemorialCard({
               >
                 Libro de recuerdos
               </Link>
+              <Link
+                href={`/admin/memorials/${memorialId}/collaborators`}
+                className="block px-4 py-2 text-sm text-ink-700 hover:bg-stone-50"
+                onClick={() => setMenuOpen(false)}
+              >
+                Colaboradores
+              </Link>
             </div>
           )}
         </div>

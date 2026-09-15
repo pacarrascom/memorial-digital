@@ -21,6 +21,25 @@ export default async function HomePage() {
 
   return (
     <main>
+      <header className="sticky top-0 z-10 border-b border-ash bg-stone-50/90 backdrop-blur supports-[backdrop-filter]:bg-stone-50/70">
+        <div className="mx-auto flex max-w-3xl items-center justify-between px-6 py-4 sm:px-8">
+          <Link href="/" className="font-display text-lg text-ink-900">
+            Dorsera Memorial
+          </Link>
+          <nav className="flex items-center gap-3 text-sm">
+            <Link href="/login" className="text-ink-600 transition hover:text-ink-900">
+              Ingresar
+            </Link>
+            <Link
+              href="/register"
+              className="rounded-lg bg-ink-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-ink-700"
+            >
+              Comenzar
+            </Link>
+          </nav>
+        </div>
+      </header>
+
       {/* Hero */}
       <section className="mx-auto max-w-3xl px-6 py-20 sm:px-8 sm:py-28">
         <div className="ribbon-of-light pl-8">
