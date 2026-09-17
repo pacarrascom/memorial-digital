@@ -9,7 +9,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
   return (
     <div className="min-h-screen bg-stone-50 dark:bg-mist-night">
-      <header className="flex items-center justify-between border-b border-ash px-8 py-4 dark:border-ash-night">
+      <header className="flex flex-wrap items-center justify-between gap-3 border-b border-ash px-4 py-4 sm:px-6 lg:px-8 dark:border-ash-night">
         <span className="font-display text-lg text-ink-900 dark:text-stone-50">
           Panel familiar
         </span>
@@ -18,7 +18,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           <SignOutButton />
         </div>
       </header>
-      <main className="px-8 py-10">{children}</main>
+      <main className="px-4 py-6 sm:px-6 sm:py-8 lg:px-8 lg:py-10">{children}</main>
     </div>
   );
 }

@@ -2,6 +2,7 @@
  
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { createMemorial } from '@/lib/actions/memorial'
 import { createClient } from '@/lib/supabase/client'
  
@@ -50,24 +51,24 @@ export default function NewMemorialPage() {
  
   if (isFuneraria) {
     return (
-      <main className="mx-auto max-w-lg px-6 py-16">
-        <a href="/admin" className="mb-4 inline-block text-sm text-ink-400 hover:text-ink-700">
+      <div className="mx-auto max-w-lg">
+        <Link href="/admin" className="mb-4 inline-block text-sm text-ink-400 hover:text-ink-700">
           ← Volver al panel
-        </a>
+        </Link>
         <h1 className="mb-2 font-display text-2xl text-ink-900">Cuenta institucional</h1>
         <p className="text-sm text-ink-600">
           Tu cuenta es de tipo funeraria. Crea memoriales desde el panel de tu organización
           en /admin, no como memorial individual.
         </p>
-      </main>
+      </div>
     )
   }
- 
+
   return (
-    <main className="mx-auto max-w-lg px-6 py-16">
-      <a href="/admin" className="mb-4 inline-block text-sm text-ink-400 hover:text-ink-700">
+    <div className="mx-auto max-w-lg">
+      <Link href="/admin" className="mb-4 inline-block text-sm text-ink-400 hover:text-ink-700">
         ← Volver al panel
-      </a>
+      </Link>
       <h1 className="mb-2 font-display text-2xl text-ink-900">Crear un memorial</h1>
       <p className="mb-8 text-sm text-ink-400">
         Solo necesitas el nombre para empezar — puedes completar el resto después.
@@ -153,6 +154,6 @@ export default function NewMemorialPage() {
           {loading ? 'Creando…' : 'Crear memorial'}
         </button>
       </form>
-    </main>
+    </div>
   )
 }

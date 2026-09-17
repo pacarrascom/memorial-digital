@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation'
+import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { EditProfileForm } from '@/components/admin/EditProfileForm'
 
@@ -24,10 +25,10 @@ export default async function EditMemorialPage({ params }: PageProps) {
 
   return (
     <div className="mx-auto max-w-lg">
-      <a href="/admin" className="mb-4 inline-block text-sm text-ink-400 hover:text-ink-700">
+      <Link href="/admin" className="mb-6 inline-flex items-center gap-1 text-sm text-ink-500 hover:text-ink-700">
         ← Volver al panel
-      </a>
-      <h1 className="mb-8 font-display text-2xl text-ink-900 dark:text-stone-50">
+      </Link>
+      <h1 className="mb-8 font-display text-2xl text-ink-900">
         Editar memorial
       </h1>
       <EditProfileForm

@@ -39,29 +39,27 @@ export default async function CollaboratorsPage({
   const { data: collaborators, error } = await listCollaborators(memorialId);
 
   return (
-    <main className="min-h-screen bg-stone-50 px-4 py-6 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-2xl">
-        <Link
-          href="/admin"
-          className="mb-6 inline-flex items-center gap-1 text-sm text-ink-500 hover:text-ink-700"
-        >
-          ← Volver al panel
-        </Link>
+    <div className="mx-auto max-w-2xl">
+      <Link
+        href="/admin"
+        className="mb-6 inline-flex items-center gap-1 text-sm text-ink-500 hover:text-ink-700"
+      >
+        ← Volver al panel
+      </Link>
 
-        <div className="mb-6">
-          <h1 className="font-display text-2xl text-ink-900">Colaboradores</h1>
-          <p className="mt-1 text-sm text-ink-500">
-            {(memorial as any).person_profile?.full_name ?? 'Memorial'}
-          </p>
-        </div>
-
-        <CollaboratorsManager
-          memorialId={memorialId}
-          initialCollaborators={collaborators ?? []}
-          collaboratorLimit={memorial.collaborator_limit}
-          loadError={error}
-        />
+      <div className="mb-6">
+        <h1 className="font-display text-2xl text-ink-900">Colaboradores</h1>
+        <p className="mt-1 text-sm text-ink-500">
+          {(memorial as any).person_profile?.full_name ?? 'Memorial'}
+        </p>
       </div>
-    </main>
+
+      <CollaboratorsManager
+        memorialId={memorialId}
+        initialCollaborators={collaborators ?? []}
+        collaboratorLimit={memorial.collaborator_limit}
+        loadError={error}
+      />
+    </div>
   );
 }

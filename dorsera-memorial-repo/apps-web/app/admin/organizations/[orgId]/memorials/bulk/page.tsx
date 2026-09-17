@@ -27,7 +27,7 @@ export default async function BulkMemorialPage({
   }
 
   return (
-    <main className="mx-auto max-w-2xl px-4 py-8">
+    <div className="mx-auto max-w-2xl">
       <Link
         href="/admin"
         className="mb-6 inline-flex items-center gap-1 text-sm text-ink-500 hover:text-ink-700"
@@ -41,6 +41,6 @@ export default async function BulkMemorialPage({
       <p className="mb-6 text-sm text-ink-500">para {org.name}</p>
 
       <BulkMemorialUpload organizationId={org.id} organizationName={org.name} />
-    </main>
+    </div>
   );
 }

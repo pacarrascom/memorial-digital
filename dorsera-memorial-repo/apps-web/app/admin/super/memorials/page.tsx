@@ -30,7 +30,7 @@ export default async function SuperAdminMemorialsPage() {
     .order('created_at', { ascending: false });
  
   return (
-    <main className="mx-auto max-w-3xl px-4 py-8">
+    <div className="mx-auto max-w-3xl">
       <Link
         href="/admin"
         className="mb-6 inline-flex items-center gap-1 text-sm text-ink-500 hover:text-ink-700"
@@ -89,6 +89,6 @@ export default async function SuperAdminMemorialsPage() {
           ))}
         </ul>
       )}
-    </main>
+    </div>
   );
 }
