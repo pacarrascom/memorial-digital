@@ -80,9 +80,11 @@ export default async function MemorialPage({ params }: PageProps) {
   if (!memorial) notFound();
  
   const approvedTributes = (memorial.tributes ?? []).filter((t) => t.moderation_status === "aprobado");
-  const sortedEvents = [...(memorial.timeline_events ?? [])].sort(
-    (a, b) => new Date(a.event_date).getTime() - new Date(b.event_date).getTime()
-  );
+  const sortedEvents = [...(memorial.timeline_events ?? [])].sort((a, b) => {
+    const aTime = a.event_date ? new Date(a.event_date).getTime() : Infinity;
+    const bTime = b.event_date ? new Date(b.event_date).getTime() : Infinity;
+    return aTime - bTime;
+  });
  
   // Schema.org (Person) para SEO — inyectado como JSON-LD
   const jsonLd = {

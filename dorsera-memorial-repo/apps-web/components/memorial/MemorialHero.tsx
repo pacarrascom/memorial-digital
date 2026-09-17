@@ -31,12 +31,6 @@ export function MemorialHero({ memorial }: { memorial: Memorial }) {
       <p className="mt-2 font-mono text-sm tracking-wide text-ink-400 dark:text-ash-night">
         {formatLifespan(person?.birth_date ?? null, person?.death_date ?? null)}
       </p>
-
-      {person?.biography && (
-            <p className="mt-6 max-w-2xl text-ink-700 dark:text-stone-100">
-              {person.biography}
-            </p>
-          )}
     </header>
   );
 }

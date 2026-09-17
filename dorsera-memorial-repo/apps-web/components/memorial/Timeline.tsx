@@ -17,12 +17,14 @@ export function Timeline({ events }: { events: TimelineEvent[] }) {
               className="absolute -left-[5px] mt-1.5 h-2.5 w-2.5 rounded-full bg-moss-600"
               aria-hidden="true"
             />
-            <time className="font-mono text-xs text-ink-400 dark:text-ash-night">
-              {new Date(event.event_date).toLocaleDateString("es", {
-                year: "numeric",
-                month: "long",
-              })}
-            </time>
+            {event.event_date && (
+              <time className="font-mono text-xs text-ink-400 dark:text-ash-night">
+                {new Date(event.event_date).toLocaleDateString("es", {
+                  year: "numeric",
+                  month: "long",
+                })}
+              </time>
+            )}
             <h3 className="mt-1 font-display text-lg text-ink-900 dark:text-stone-50">
               {event.title}
             </h3>

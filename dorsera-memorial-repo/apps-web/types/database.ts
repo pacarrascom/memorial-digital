@@ -78,7 +78,7 @@ export interface MediaItem {
 export interface TimelineEvent {
   id: string;
   memorial_id: string;
-  event_date: string;
+  event_date: string | null;
   title: string;
   description: string | null;
   location: { nombre?: string } | null;
