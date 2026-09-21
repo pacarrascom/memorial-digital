@@ -16,23 +16,44 @@ function StatTile({
   label,
   value,
   note,
+  attention = false,
+  ariaLabel,
 }: {
   href: string;
   icon: string;
   label: string;
   value: number;
   note?: ReactNode;
+  // "Por moderar" con valor > 0 es la única métrica que representa una
+  // acción pendiente del usuario, no solo un dato informativo — se apoya
+  // en el mismo acento flame que ya usa el resto del producto para
+  // "necesita tu atención" (nota de este tile, estado "rechazado" del
+  // guestbook), no un color nuevo ni un rojo de error.
+  attention?: boolean;
+  ariaLabel?: string;
 }) {
   return (
     <Link
       href={href}
-      className="block rounded-lg border border-stone-300 bg-white p-4 transition-colors hover:border-moss-400 hover:bg-stone-50"
+      aria-label={ariaLabel}
+      className={
+        attention
+          ? "block rounded-lg border border-flame-400 bg-flame-600/5 p-4 transition-colors hover:border-flame-600 hover:bg-flame-600/10"
+          : "block rounded-lg border border-stone-300 bg-white p-4 transition-colors hover:border-moss-400 hover:bg-stone-50"
+      }
     >
-      <div className="flex items-center gap-2 text-sm text-ink-500">
+      <div className={`flex items-center gap-2 text-sm ${attention ? "text-flame-600" : "text-ink-500"}`}>
+        {attention && (
+          <span aria-hidden="true" className="h-1.5 w-1.5 shrink-0 rounded-full bg-flame-600" />
+        )}
         <span aria-hidden="true">{icon}</span>
         <span>{label}</span>
       </div>
-      <p className="mt-2 text-2xl font-semibold text-ink-900">{value.toLocaleString("es-CL")}</p>
+      <p
+        className={`mt-2 text-2xl font-semibold ${attention ? "text-flame-600" : "text-ink-900"}`}
+      >
+        {value.toLocaleString("es-CL")}
+      </p>
       {note}
     </Link>
   );
@@ -80,6 +101,12 @@ export function MemorialInsights({
           icon="📝"
           label="Por moderar"
           value={data.tributesPending}
+          attention={data.tributesPending > 0}
+          ariaLabel={
+            data.tributesPending > 0
+              ? `${data.tributesPending} ${data.tributesPending === 1 ? "mensaje" : "mensajes"} por moderar, ver cola de moderación`
+              : "Sin mensajes por moderar"
+          }
           note={
             data.tributesPending > 0 ? (
               <p className="mt-1 text-xs text-flame-600">Esperando tu revisión</p>
