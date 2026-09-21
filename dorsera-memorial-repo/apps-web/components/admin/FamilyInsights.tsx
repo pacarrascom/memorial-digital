@@ -75,44 +75,67 @@ export function MemorialInsights({
   slug: string;
   data: FamilyInsightsData;
 }) {
+  // Nadie lo visitó todavía: ni velas, ni flores/corazones, ni mensajes
+  // (y por lo tanto tampoco hay nada por moderar). El contenido que la
+  // familia subió (fotos, timeline) no cuenta para esto — es propio, no
+  // visitas — así que sigue mostrándose igual más abajo.
+  const noActivity = data.candles === 0 && data.reactions === 0 && data.tributesTotal === 0;
+
   return (
     <div>
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-        <StatTile
-          href={`/m/${slug}#tributes-heading`}
-          icon="🕯️"
-          label="Velas encendidas"
-          value={data.candles}
-        />
-        <StatTile
-          href={`/m/${slug}#tributes-heading`}
-          icon="🌸"
-          label="Flores y cariño"
-          value={data.reactions}
-        />
-        <StatTile
-          href={`/admin/memorials/${memorialId}/guestbook`}
-          icon="💬"
-          label="Mensajes recibidos"
-          value={data.tributesTotal}
-        />
-        <StatTile
-          href={`/admin/memorials/${memorialId}/guestbook`}
-          icon="📝"
-          label="Por moderar"
-          value={data.tributesPending}
-          attention={data.tributesPending > 0}
-          ariaLabel={
-            data.tributesPending > 0
-              ? `${data.tributesPending} ${data.tributesPending === 1 ? "mensaje" : "mensajes"} por moderar, ver cola de moderación`
-              : "Sin mensajes por moderar"
-          }
-          note={
-            data.tributesPending > 0 ? (
-              <p className="mt-1 text-xs text-flame-600">Esperando tu revisión</p>
-            ) : undefined
-          }
-        />
+        {noActivity ? (
+          <div className="col-span-full flex flex-col items-start gap-3 rounded-lg border border-moss-400/30 bg-moss-600/5 p-5 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-sm text-ink-700">
+              Aún no ha recibido visitas. Comparte el código QR para que familiares y amigos
+              puedan dejar su cariño.
+            </p>
+            <Link
+              href={`/admin/memorials/${memorialId}/qr`}
+              className="shrink-0 rounded-full bg-moss-600 px-5 py-2 text-sm text-stone-50 transition-colors hover:bg-moss-800"
+            >
+              Compartir código QR
+            </Link>
+          </div>
+        ) : (
+          <>
+            <StatTile
+              href={`/m/${slug}#tributes-heading`}
+              icon="🕯️"
+              label="Velas encendidas"
+              value={data.candles}
+            />
+            <StatTile
+              href={`/m/${slug}#tributes-heading`}
+              icon="🌸"
+              label="Flores y cariño"
+              value={data.reactions}
+            />
+            <StatTile
+              href={`/admin/memorials/${memorialId}/guestbook`}
+              icon="💬"
+              label="Mensajes recibidos"
+              value={data.tributesTotal}
+            />
+            <StatTile
+              href={`/admin/memorials/${memorialId}/guestbook`}
+              icon="📝"
+              label="Por moderar"
+              value={data.tributesPending}
+              attention={data.tributesPending > 0}
+              ariaLabel={
+                data.tributesPending > 0
+                  ? `${data.tributesPending} ${data.tributesPending === 1 ? "mensaje" : "mensajes"} por moderar, ver cola de moderación`
+                  : "Sin mensajes por moderar"
+              }
+              note={
+                data.tributesPending > 0 ? (
+                  <p className="mt-1 text-xs text-flame-600">Esperando tu revisión</p>
+                ) : undefined
+              }
+            />
+          </>
+        )}
         <StatTile
           href={`/admin/memorials/${memorialId}/gallery`}
           icon="📷"
