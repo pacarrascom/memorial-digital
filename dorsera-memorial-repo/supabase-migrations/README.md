@@ -47,7 +47,7 @@ A partir del Security Advisor de Supabase se aplicaron tres fixes en producción
 
 Quedan dos advertencias del advisor **sin tocar, a propósito**:
 - Las 20 funciones `SECURITY DEFINER` restantes siguen expuestas a `anon`/`authenticated` — es el patrón de diseño del proyecto (cada una valida permisos por dentro).
-- `auth_leaked_password_protection` (WARN) — se activa en Dashboard → Authentication, no por SQL.
+- `auth_leaked_password_protection` (WARN) — **requiere plan Supabase Pro o superior** (el toggle en Dashboard → Authentication → Attack Protection aparece marcado "Only available on Pro plan and above"). El proyecto está en plan Free, igual que branching (ver más abajo), así que queda deshabilitado hasta que se evalúe un upgrade. Decisión tomada el 2026-09-21: no es bloqueante, se revisa si/cuando se upgradee el plan.
 
 ## Verificar que coincide con producción
 
