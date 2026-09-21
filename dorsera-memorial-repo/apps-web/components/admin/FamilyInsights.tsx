@@ -181,23 +181,23 @@ export function MemorialInsights({
           }
         />
       </div>
-      {data.timelineEvents > 0 && (
-        <p className="mt-3 text-xs text-ink-400">
-          <Link
-            href={`/admin/memorials/${memorialId}/timeline`}
-            className="underline hover:text-ink-600"
-          >
-            {data.timelineUnlimited
-              ? `${data.timelineEvents} ${data.timelineEvents === 1 ? "evento" : "eventos"} en la línea de tiempo`
-              : `${data.timelineEvents}/${FREE_TIMELINE_LIMIT} eventos en la línea de tiempo`}
-          </Link>
-          {!data.timelineUnlimited && data.timelineEvents >= FREE_TIMELINE_LIMIT && (
-            <span className="ml-2 align-middle">
-              <FreePlanBadge />
-            </span>
-          )}
-        </p>
-      )}
+      {/* Siempre visible, incluso en 0 — que aparezca/desaparezca según el
+          conteo hacía que las tarjetas quedaran de distinta altura entre sí. */}
+      <p className="mt-3 text-xs text-ink-400">
+        <Link
+          href={`/admin/memorials/${memorialId}/timeline`}
+          className="underline hover:text-ink-600"
+        >
+          {data.timelineUnlimited
+            ? `${data.timelineEvents} ${data.timelineEvents === 1 ? "evento" : "eventos"} en la línea de tiempo`
+            : `${data.timelineEvents}/${FREE_TIMELINE_LIMIT} eventos en la línea de tiempo`}
+        </Link>
+        {!data.timelineUnlimited && data.timelineEvents >= FREE_TIMELINE_LIMIT && (
+          <span className="ml-2 align-middle">
+            <FreePlanBadge />
+          </span>
+        )}
+      </p>
     </div>
   );
 }
