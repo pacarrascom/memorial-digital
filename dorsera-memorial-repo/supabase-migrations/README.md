@@ -49,6 +49,22 @@ Quedan dos advertencias del advisor **sin tocar, a propósito**:
 - Las 20 funciones `SECURITY DEFINER` restantes siguen expuestas a `anon`/`authenticated` — es el patrón de diseño del proyecto (cada una valida permisos por dentro).
 - `auth_leaked_password_protection` (WARN) — **requiere plan Supabase Pro o superior** (el toggle en Dashboard → Authentication → Attack Protection aparece marcado "Only available on Pro plan and above"). El proyecto está en plan Free, igual que branching (ver más abajo), así que queda deshabilitado hasta que se evalúe un upgrade. Decisión tomada el 2026-09-21: no es bloqueante, se revisa si/cuando se upgradee el plan.
 
+## Cuentas de prueba creadas directo en auth.users
+
+Si en algún momento se necesita otra cuenta de prueba insertando directo en
+`auth.users`/`auth.identities` por SQL (en vez de pasar por el flujo real de
+`/register`), hay un gotcha conocido de Supabase Auth (GoTrue): varias
+columnas de texto (`confirmation_token`, `recovery_token`, `email_change`,
+`email_change_token_new`, `email_change_token_current`, `phone_change`,
+`phone_change_token`, `reauthentication_token`) deben quedar en `''` (string
+vacío), **nunca en `NULL`** — si quedan en `NULL`, cualquier intento de login
+falla con `500 { "error_code": "unexpected_failure", "msg": "Database error
+querying schema" }`, un error genérico que no menciona la causa real. Pasó el
+2026-09-21 al crear `funeraria.test@dorsera.test`: se insertó sin esas
+columnas (quedaron `NULL` por defecto) y hubo que corregirlas después con un
+`update ... coalesce(col, '')`. Insertarlas ya en `''` desde el `insert`
+original evita el problema.
+
 ## Verificar que coincide con producción
 
 Antes de asumir que este repo sigue reflejando la base real, compará contra el proyecto vivo (asumiendo acceso vía MCP de Supabase o el dashboard):
