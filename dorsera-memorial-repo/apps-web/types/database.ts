@@ -10,6 +10,10 @@ export type TributeType = "message" | "candle" | "flower" | "prayer" | "reaction
 export type TributeStatus = "pendiente" | "aprobado" | "rechazado";
 export type KinshipType = "parent" | "child" | "spouse" | "sibling";
 export type FamilyRole = "family_admin" | "family_collaborator";
+// "vela" existe en el enum de la base (reaction_type) pero las velas se
+// registran en su propia tabla `candles` (ver CandleButton) — acá solo se
+// usan flor y corazón.
+export type ReactionType = "flor" | "corazon";
 
 export interface Person {
   id: string;
@@ -97,6 +101,15 @@ export interface Tribute {
   moderation_status: TributeStatus;
   moderated_by: string | null;
   moderated_at: string | null;
+  created_at: string;
+}
+
+export interface Reaction {
+  id: string;
+  memorial_id: string;
+  guestbook_entry_id: string | null;
+  user_id: string | null;
+  type: ReactionType;
   created_at: string;
 }
 

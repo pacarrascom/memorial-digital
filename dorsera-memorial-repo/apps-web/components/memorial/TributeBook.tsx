@@ -4,6 +4,7 @@ import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import type { Tribute } from "@/types/database";
 import { CandleButton } from "./CandleButton";
+import { ReactionButtons } from "./ReactionButtons";
 
 export function TributeBook({
   memorialId,
@@ -46,7 +47,10 @@ export function TributeBook({
         <h2 id="tributes-heading" className="text-2xl font-display text-ink-900 dark:text-stone-50">
           Libro de recuerdos
         </h2>
-        <CandleButton memorialId={memorialId} />
+        <div className="flex flex-wrap items-center gap-3">
+          <CandleButton memorialId={memorialId} />
+          <ReactionButtons memorialId={memorialId} />
+        </div>
       </div>
 
       <form onSubmit={submitTribute} className="mb-12 max-w-xl space-y-3">
