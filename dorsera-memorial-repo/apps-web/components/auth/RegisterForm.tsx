@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { PasswordInput } from './PasswordInput'
 import Link from 'next/link'
  
 type AccountType = 'natural' | 'funeraria'
@@ -148,22 +149,16 @@ export function RegisterForm() {
         />
       </div>
  
-      <div className="space-y-1.5">
-        <label htmlFor="password" className="block text-sm font-medium text-stone-700">
-          Contraseña
-        </label>
-        <input
-          id="password"
-          type="password"
-          required
-          minLength={8}
-          autoComplete="new-password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="w-full rounded-lg border border-stone-300 bg-white px-3.5 py-2.5 text-ink-900 placeholder:text-stone-400 focus:border-moss-400 focus:outline-none focus:ring-1 focus:ring-moss-400"
-          placeholder="Mínimo 8 caracteres"
-        />
-      </div>
+      <PasswordInput
+        id="password"
+        label="Contraseña"
+        required
+        minLength={8}
+        autoComplete="new-password"
+        value={password}
+        onChange={setPassword}
+        placeholder="Mínimo 8 caracteres"
+      />
  
       {accountType === 'funeraria' && (
         <div className="space-y-4 rounded-lg border border-stone-200 bg-stone-50 p-4">

@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { PasswordInput } from './PasswordInput'
 import Link from 'next/link'
 
 export function LoginForm() {
@@ -62,24 +63,15 @@ export function LoginForm() {
         />
       </div>
 
-      <div className="space-y-1.5">
-        <label
-          htmlFor="password"
-          className="block text-sm font-medium text-stone-700"
-        >
-          Contraseña
-        </label>
-        <input
-          id="password"
-          type="password"
-          required
-          autoComplete="current-password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="w-full rounded-lg border border-stone-300 bg-white px-3.5 py-2.5 text-ink-900 placeholder:text-stone-400 focus:border-moss-400 focus:outline-none focus:ring-1 focus:ring-moss-400"
-          placeholder="••••••••"
-        />
-      </div>
+      <PasswordInput
+        id="password"
+        label="Contraseña"
+        required
+        autoComplete="current-password"
+        value={password}
+        onChange={setPassword}
+        placeholder="••••••••"
+      />
 
       {error && (
         <p role="alert" className="text-sm text-flame-600">
