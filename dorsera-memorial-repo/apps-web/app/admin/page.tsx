@@ -2,7 +2,18 @@ import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { MemorialCard } from "@/components/admin/MemorialCard";
 import { UnlockButton } from "@/components/admin/UnlockButton";
-import { FamilyInsights, type FamilyInsightsData } from "@/components/admin/FamilyInsights";
+import { FamilyInsights, type FamilyInsightsItem } from "@/components/admin/FamilyInsights";
+
+function emptyCounts() {
+  return { candles: 0, reactions: 0, tributesTotal: 0, tributesPending: 0, media: 0, timelineEvents: 0 };
+}
+
+function countBy(rows: { memorial_id: string }[] | null): Record<string, number> {
+  return (rows ?? []).reduce((acc: Record<string, number>, row) => {
+    acc[row.memorial_id] = (acc[row.memorial_id] ?? 0) + 1;
+    return acc;
+  }, {});
+}
 
 export default async function AdminPage() {
   const supabase = await createClient();
@@ -30,45 +41,47 @@ export default async function AdminPage() {
     .map((r: any) => r.memorial?.id)
     .filter(Boolean) as string[];
 
-  let familyInsights: FamilyInsightsData | null = null;
+  let familyInsightsList: FamilyInsightsItem[] = [];
   if (familyMemorialIds.length > 0) {
-    const [candles, reactions, tributesTotal, tributesPending, media, timelineEvents] =
-      await Promise.all([
-        supabase
-          .from("candles")
-          .select("id", { count: "exact", head: true })
-          .in("memorial_id", familyMemorialIds),
-        supabase
-          .from("reactions")
-          .select("id", { count: "exact", head: true })
-          .in("memorial_id", familyMemorialIds),
-        supabase
-          .from("guestbook_entries")
-          .select("id", { count: "exact", head: true })
-          .in("memorial_id", familyMemorialIds),
-        supabase
-          .from("guestbook_entries")
-          .select("id", { count: "exact", head: true })
-          .in("memorial_id", familyMemorialIds)
-          .eq("moderation_status", "pendiente"),
-        supabase
-          .from("media_assets")
-          .select("id", { count: "exact", head: true })
-          .in("memorial_id", familyMemorialIds),
-        supabase
-          .from("timeline_events")
-          .select("id", { count: "exact", head: true })
-          .in("memorial_id", familyMemorialIds),
-      ]);
+    const [candlesRows, reactionsRows, guestbookRows, mediaRows, timelineRows] = await Promise.all([
+      supabase.from("candles").select("memorial_id").in("memorial_id", familyMemorialIds),
+      supabase.from("reactions").select("memorial_id").in("memorial_id", familyMemorialIds),
+      supabase
+        .from("guestbook_entries")
+        .select("memorial_id, moderation_status")
+        .in("memorial_id", familyMemorialIds),
+      supabase.from("media_assets").select("memorial_id").in("memorial_id", familyMemorialIds),
+      supabase.from("timeline_events").select("memorial_id").in("memorial_id", familyMemorialIds),
+    ]);
 
-    familyInsights = {
-      candles: candles.count ?? 0,
-      reactions: reactions.count ?? 0,
-      tributesTotal: tributesTotal.count ?? 0,
-      tributesPending: tributesPending.count ?? 0,
-      media: media.count ?? 0,
-      timelineEvents: timelineEvents.count ?? 0,
-    };
+    const candlesById = countBy(candlesRows.data);
+    const reactionsById = countBy(reactionsRows.data);
+    const mediaById = countBy(mediaRows.data);
+    const timelineById = countBy(timelineRows.data);
+    const tributesTotalById = countBy(guestbookRows.data);
+    const tributesPendingById = countBy(
+      (guestbookRows.data ?? []).filter((r: any) => r.moderation_status === "pendiente")
+    );
+
+    familyInsightsList = (roles ?? [])
+      .filter((r: any) => r.memorial?.id)
+      .map((r: any) => {
+        const id = r.memorial.id as string;
+        return {
+          memorialId: id,
+          slug: r.memorial.slug as string,
+          fullName: (r.memorial.person_profile?.full_name as string) ?? "Sin nombre",
+          data: {
+            ...emptyCounts(),
+            candles: candlesById[id] ?? 0,
+            reactions: reactionsById[id] ?? 0,
+            tributesTotal: tributesTotalById[id] ?? 0,
+            tributesPending: tributesPendingById[id] ?? 0,
+            media: mediaById[id] ?? 0,
+            timelineEvents: timelineById[id] ?? 0,
+          },
+        };
+      });
   }
 
   const { data: orgRoles } = await supabase
@@ -166,7 +179,9 @@ export default async function AdminPage() {
         </div>
       )}
 
-      {!isFuneraria && familyInsights && <FamilyInsights data={familyInsights} />}
+      {!isFuneraria && familyInsightsList.length > 0 && (
+        <FamilyInsights items={familyInsightsList} />
+      )}
 
       {!isFuneraria && (
         !roles || roles.length === 0 ? (
