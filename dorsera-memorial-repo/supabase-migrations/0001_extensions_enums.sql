@@ -1,74 +1,74 @@
 -- ============================================================================
 -- Dorsera Memorial · Migración 0001
 -- Extensiones y tipos ENUM
+-- Regenerado desde el esquema real de producción (proyecto Supabase
+-- "Memorial Digital", 2026-09-21) — ver supabase-migrations/README.md.
 -- ============================================================================
 
-create extension if not exists "pgcrypto";   -- gen_random_uuid()
-create extension if not exists "citext";     -- emails case-insensitive
+create extension if not exists pgcrypto with schema public;
+create extension if not exists unaccent with schema public;
 
--- Rol global de la cuenta (no confundir con el rol dentro de un family_group)
-create type app_global_role as enum (
+create type public.role_name as enum (
   'super_admin',
-  'funeral_home_staff',
-  'user'
+  'funeraria',
+  'admin_familiar',
+  'colaborador_familiar',
+  'visitante',
+  'invitado_privado'
 );
 
--- Rol dentro de un family_group (memorial administrado por una familia)
-create type family_role as enum (
-  'family_admin',
-  'family_collaborator'
+create type public.memorial_visibility as enum (
+  'publico',
+  'privado',
+  'solo_invitados'
 );
 
--- Estado de moderación del libro de recuerdos
-create type tribute_status as enum (
-  'pending',
-  'approved',
-  'rejected'
-);
-
--- Tipo de tributo
-create type tribute_type as enum (
-  'message',
-  'candle',
-  'flower',
-  'prayer',
-  'reaction'
-);
-
--- Tipo de medio
-create type media_type as enum (
-  'photo',
+create type public.media_type as enum (
+  'foto',
   'video',
   'audio',
-  'letter',
-  'document'
+  'documento',
+  'carta'
 );
 
--- Visibilidad del memorial
-create type memorial_visibility as enum (
-  'public',
-  'private',
-  'unlisted'   -- accesible solo con el link/QR, no indexable
+create type public.moderation_status as enum (
+  'pendiente',
+  'aprobado',
+  'rechazado'
 );
 
--- Relación de parentesco para el árbol genealógico
-create type kinship_type as enum (
-  'parent',
-  'child',
-  'spouse',
-  'sibling'
+create type public.reaction_type as enum (
+  'vela',
+  'flor',
+  'corazon'
 );
 
--- Plan de suscripción
-create type subscription_plan as enum (
-  'free',
-  'premium_family',
-  'premium_unlimited'
+create type public.ai_job_type as enum (
+  'generar_biografia',
+  'organizar_fotos',
+  'reconocer_personas',
+  'restaurar_foto',
+  'colorear_foto',
+  'generar_timeline',
+  'video_homenaje'
 );
 
-create type subscription_status as enum (
-  'active',
-  'trialing',
-  'past_due',
-  'canceled'
+create type public.ai_job_status as enum (
+  'en_cola',
+  'procesando',
+  'completado',
+  'fallido'
 );
+
+create type public.plan_name as enum (
+  'gratuito',
+  'premium_familiar',
+  'premium_ilimitado'
+);
+
+-- Nota: en el proyecto real, RLS queda activado en toda tabla nueva de
+-- `public` automáticamente por el event trigger `ensure_rls` que Supabase
+-- instala por defecto en todo proyecto (no es algo que este repo defina).
+-- Para que estas migraciones reconstruyan el esquema en cualquier Postgres
+-- (no solo en Supabase), cada `create table` de 0002-0004 activa RLS
+-- explícitamente con su propio `alter table ... enable row level security`.
