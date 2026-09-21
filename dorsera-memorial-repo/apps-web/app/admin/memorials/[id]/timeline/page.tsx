@@ -3,8 +3,7 @@ import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { TimelineManager } from '@/components/timeline/TimelineManager';
 import { UnlockButton } from '@/components/admin/UnlockButton';
-
-const FREE_TIMELINE_LIMIT = 5;
+import { FREE_TIMELINE_LIMIT } from '@/lib/planLimits';
 
 export default async function TimelinePage({
   params,

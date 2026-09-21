@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState, type ReactNode } from "react";
 import { QrModal } from "./QrModal";
+import { FREE_PHOTO_LIMIT, FREE_TIMELINE_LIMIT } from "@/lib/planLimits";
 
 export type FamilyInsightsData = {
   candles: number;
@@ -11,13 +12,28 @@ export type FamilyInsightsData = {
   tributesPending: number;
   media: number;
   timelineEvents: number;
+  photosUnlimited: boolean;
+  timelineUnlimited: boolean;
 };
+
+// Etiqueta sutil de "llegaste al límite gratuito" — deliberadamente neutra
+// (stone/ink, no flame): es un aviso informativo, no una acción pendiente
+// como "Por moderar". Mismo patrón de pill que ya usa "Portada" en
+// GalleryUploadForm.
+function FreePlanBadge() {
+  return (
+    <span className="mt-1 inline-block rounded-full bg-stone-200 px-2 py-0.5 text-[10px] font-medium text-ink-600">
+      Plan gratuito
+    </span>
+  );
+}
 
 function StatTile({
   href,
   icon,
   label,
   value,
+  displayValue,
   note,
   attention = false,
   ariaLabel,
@@ -26,6 +42,10 @@ function StatTile({
   icon: string;
   label: string;
   value: number;
+  // Texto a mostrar en vez del número solo (ej. "8/10 fotos") — para
+  // memoriales del plan gratuito, que tienen tope. Si no se pasa, se
+  // muestra el número tal cual, como siempre.
+  displayValue?: string;
   note?: ReactNode;
   // "Por moderar" con valor > 0 es la única métrica que representa una
   // acción pendiente del usuario, no solo un dato informativo — se apoya
@@ -55,7 +75,7 @@ function StatTile({
       <p
         className={`mt-2 text-2xl font-semibold ${attention ? "text-flame-600" : "text-ink-900"}`}
       >
-        {value.toLocaleString("es-CL")}
+        {displayValue ?? value.toLocaleString("es-CL")}
       </p>
       {note}
     </Link>
@@ -155,6 +175,10 @@ export function MemorialInsights({
           icon="📷"
           label="Fotos y recuerdos"
           value={data.media}
+          displayValue={data.photosUnlimited ? undefined : `${data.media}/${FREE_PHOTO_LIMIT} fotos`}
+          note={
+            !data.photosUnlimited && data.media >= FREE_PHOTO_LIMIT ? <FreePlanBadge /> : undefined
+          }
         />
       </div>
       {data.timelineEvents > 0 && (
@@ -163,9 +187,15 @@ export function MemorialInsights({
             href={`/admin/memorials/${memorialId}/timeline`}
             className="underline hover:text-ink-600"
           >
-            {data.timelineEvents} {data.timelineEvents === 1 ? "evento" : "eventos"} en la línea
-            de tiempo
+            {data.timelineUnlimited
+              ? `${data.timelineEvents} ${data.timelineEvents === 1 ? "evento" : "eventos"} en la línea de tiempo`
+              : `${data.timelineEvents}/${FREE_TIMELINE_LIMIT} eventos en la línea de tiempo`}
           </Link>
+          {!data.timelineUnlimited && data.timelineEvents >= FREE_TIMELINE_LIMIT && (
+            <span className="ml-2 align-middle">
+              <FreePlanBadge />
+            </span>
+          )}
         </p>
       )}
     </div>

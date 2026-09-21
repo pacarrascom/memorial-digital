@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { FREE_PHOTO_LIMIT } from '@/lib/planLimits'
 
 type UploadPhotoResult =
   | { success: true; url: string }
@@ -35,8 +36,6 @@ export async function uploadMemorialPhoto(
   if (!hasPermission) {
     return { success: false, error: 'No tienes permiso para subir fotos a este memorial.' }
   }
-
-  const FREE_PHOTO_LIMIT = 10
 
   const { count: photoCount } = await supabase
     .from('media_assets')

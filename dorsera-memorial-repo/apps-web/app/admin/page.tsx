@@ -5,7 +5,16 @@ import { UnlockButton } from "@/components/admin/UnlockButton";
 import type { FamilyInsightsData } from "@/components/admin/FamilyInsights";
 
 function emptyCounts() {
-  return { candles: 0, reactions: 0, tributesTotal: 0, tributesPending: 0, media: 0, timelineEvents: 0 };
+  return {
+    candles: 0,
+    reactions: 0,
+    tributesTotal: 0,
+    tributesPending: 0,
+    media: 0,
+    timelineEvents: 0,
+    photosUnlimited: false,
+    timelineUnlimited: false,
+  };
 }
 
 function countBy(rows: { memorial_id: string }[] | null): Record<string, number> {
@@ -43,16 +52,21 @@ export default async function AdminPage() {
 
   let familyInsightsByMemorial: Record<string, FamilyInsightsData> = {};
   if (familyMemorialIds.length > 0) {
-    const [candlesRows, reactionsRows, guestbookRows, mediaRows, timelineRows] = await Promise.all([
-      supabase.from("candles").select("memorial_id").in("memorial_id", familyMemorialIds),
-      supabase.from("reactions").select("memorial_id").in("memorial_id", familyMemorialIds),
-      supabase
-        .from("guestbook_entries")
-        .select("memorial_id, moderation_status")
-        .in("memorial_id", familyMemorialIds),
-      supabase.from("media_assets").select("memorial_id").in("memorial_id", familyMemorialIds),
-      supabase.from("timeline_events").select("memorial_id").in("memorial_id", familyMemorialIds),
-    ]);
+    const [candlesRows, reactionsRows, guestbookRows, mediaRows, timelineRows, entitlementRows] =
+      await Promise.all([
+        supabase.from("candles").select("memorial_id").in("memorial_id", familyMemorialIds),
+        supabase.from("reactions").select("memorial_id").in("memorial_id", familyMemorialIds),
+        supabase
+          .from("guestbook_entries")
+          .select("memorial_id, moderation_status")
+          .in("memorial_id", familyMemorialIds),
+        supabase.from("media_assets").select("memorial_id").in("memorial_id", familyMemorialIds),
+        supabase.from("timeline_events").select("memorial_id").in("memorial_id", familyMemorialIds),
+        supabase
+          .from("memorial_entitlements")
+          .select("memorial_id, photos_unlimited, timeline_unlimited")
+          .in("memorial_id", familyMemorialIds),
+      ]);
 
     const candlesById = countBy(candlesRows.data);
     const reactionsById = countBy(reactionsRows.data);
@@ -61,6 +75,13 @@ export default async function AdminPage() {
     const tributesTotalById = countBy(guestbookRows.data);
     const tributesPendingById = countBy(
       (guestbookRows.data ?? []).filter((r: any) => r.moderation_status === "pendiente")
+    );
+    const entitlementsById = (entitlementRows.data ?? []).reduce(
+      (acc: Record<string, { photos_unlimited: boolean; timeline_unlimited: boolean }>, row: any) => {
+        acc[row.memorial_id] = row;
+        return acc;
+      },
+      {}
     );
 
     familyInsightsByMemorial = familyMemorialIds.reduce((acc: Record<string, FamilyInsightsData>, id) => {
@@ -72,6 +93,8 @@ export default async function AdminPage() {
         tributesPending: tributesPendingById[id] ?? 0,
         media: mediaById[id] ?? 0,
         timelineEvents: timelineById[id] ?? 0,
+        photosUnlimited: entitlementsById[id]?.photos_unlimited ?? false,
+        timelineUnlimited: entitlementsById[id]?.timeline_unlimited ?? false,
       };
       return acc;
     }, {});
