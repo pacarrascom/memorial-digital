@@ -2,6 +2,7 @@ import { redirect, notFound } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { OrgMemorialForm } from '@/components/admin/OrgMemorialForm';
+import { AdminContainer } from '@/components/admin/AdminContainer';
 
 export default async function NewOrgMemorialPage({
   params,
@@ -27,7 +28,7 @@ export default async function NewOrgMemorialPage({
   }
 
   return (
-    <div className="mx-auto max-w-xl">
+    <AdminContainer size="xl">
       <Link
         href="/admin"
         className="mb-6 inline-flex items-center gap-1 text-sm text-ink-500 hover:text-ink-700"
@@ -41,6 +42,6 @@ export default async function NewOrgMemorialPage({
       <p className="mb-6 text-sm text-ink-500">para {org.name}</p>
 
       <OrgMemorialForm organizationId={org.id} />
-    </div>
+    </AdminContainer>
   );
 }

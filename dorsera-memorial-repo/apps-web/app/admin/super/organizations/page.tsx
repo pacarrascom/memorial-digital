@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { OrganizationApprovalList } from '@/components/admin/OrganizationApprovalList';
 import { AdminCreateOrganizationForm } from '@/components/admin/AdminCreateOrganizationForm';
+import { AdminContainer } from '@/components/admin/AdminContainer';
  
 export default async function SuperAdminOrganizationsPage() {
   const supabase = await createClient();
@@ -24,7 +25,7 @@ export default async function SuperAdminOrganizationsPage() {
     .order('requested_at', { ascending: false });
  
   return (
-    <div className="mx-auto max-w-2xl">
+    <AdminContainer size="2xl">
       <Link
         href="/admin"
         className="mb-6 inline-flex items-center gap-1 text-sm text-ink-500 hover:text-ink-700"
@@ -39,6 +40,6 @@ export default async function SuperAdminOrganizationsPage() {
       <AdminCreateOrganizationForm />
 
       <OrganizationApprovalList initialRequests={requests ?? []} />
-    </div>
+    </AdminContainer>
   );
 }

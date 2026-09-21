@@ -2,6 +2,7 @@ import { redirect, notFound } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { GuestbookModerator } from '@/components/guestbook/GuestbookModerator';
+import { AdminContainer } from '@/components/admin/AdminContainer';
 
 export default async function GuestbookModerationPage({
   params,
@@ -33,7 +34,7 @@ export default async function GuestbookModerationPage({
     .order('created_at', { ascending: false });
 
   return (
-    <div className="mx-auto max-w-2xl">
+    <AdminContainer size="2xl">
       <Link
         href="/admin"
         className="mb-6 inline-flex items-center gap-1 text-sm text-ink-500 hover:text-ink-700"
@@ -47,6 +48,6 @@ export default async function GuestbookModerationPage({
       </div>
 
       <GuestbookModerator memorialId={memorialId} initialEntries={entries ?? []} />
-    </div>
+    </AdminContainer>
   );
 }
