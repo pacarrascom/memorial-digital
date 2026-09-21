@@ -1,31 +1,69 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { createClient } from '@/lib/supabase/client'
 import { generateQrCode } from '@/lib/actions/qr'
 import { generateQrPdf } from '@/lib/actions/qr-pdf'
 
 type QrResult = { pngUrl: string; svgUrl: string; shortCode: string; publicUrl: string }
 
-export function QrGenerator({
-  memorialId,
-  initialQr,
-}: {
-  memorialId: string
-  initialQr: QrResult | null
-}) {
+export function QrGenerator({ memorialId }: { memorialId: string }) {
+  const [initialLoading, setInitialLoading] = useState(true)
   const [loading, setLoading] = useState(false)
   const [pdfLoading, setPdfLoading] = useState(false)
   const [pdfError, setPdfError] = useState<string | null>(null)
+  // Regenerar invalida cualquier QR ya impreso (lápida, nicho, placa) —
+  // pide confirmación explícita antes de disparar la acción. No aplica a
+  // la primera generación: ahí no hay nada previo que se pueda romper.
+  const [confirmingRegenerate, setConfirmingRegenerate] = useState(false)
   const [result, setResult] = useState<
-    { success: true } & QrResult | { success: false; error: string } | null
-  >(initialQr ? { success: true, ...initialQr } : null)
+    ({ success: true } & QrResult) | { success: false; error: string } | null
+  >(null)
+
+  useEffect(() => {
+    let cancelled = false
+
+    async function loadExisting() {
+      const supabase = createClient()
+      const { data } = await supabase
+        .from('qr_codes')
+        .select('png_path, svg_path, short_code, public_url')
+        .eq('memorial_id', memorialId)
+        .maybeSingle()
+
+      if (cancelled) return
+      if (data) {
+        setResult({
+          success: true,
+          pngUrl: data.png_path ?? '',
+          svgUrl: data.svg_path ?? '',
+          shortCode: data.short_code,
+          publicUrl: data.public_url,
+        })
+      }
+      setInitialLoading(false)
+    }
+
+    loadExisting()
+    return () => {
+      cancelled = true
+    }
+  }, [memorialId])
 
   async function handleGenerate() {
     setLoading(true)
-    setResult(null)
+    setConfirmingRegenerate(false)
     const res = await generateQrCode(memorialId)
     setResult(res)
     setLoading(false)
+  }
+
+  function handleGenerateClick() {
+    if (result?.success) {
+      setConfirmingRegenerate(true)
+    } else {
+      handleGenerate()
+    }
   }
 
   async function handleDownloadPdf() {
@@ -55,15 +93,44 @@ export function QrGenerator({
     setPdfLoading(false)
   }
 
+  if (initialLoading) {
+    return <p className="text-sm text-ink-400">Cargando…</p>
+  }
+
   return (
     <>
-      <button
-        onClick={handleGenerate}
-        disabled={loading}
-        className="rounded-lg bg-ink-900 px-4 py-2.5 font-medium text-white transition hover:bg-ink-700 disabled:cursor-not-allowed disabled:opacity-60"
-      >
-        {loading ? 'Generando…' : result?.success ? 'Regenerar código QR' : 'Generar código QR'}
-      </button>
+      {!confirmingRegenerate ? (
+        <button
+          onClick={handleGenerateClick}
+          disabled={loading}
+          className="rounded-lg bg-ink-900 px-4 py-2.5 font-medium text-white transition hover:bg-ink-700 disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          {loading ? 'Generando…' : result?.success ? 'Regenerar código QR' : 'Generar código QR'}
+        </button>
+      ) : (
+        <div className="rounded-lg border border-flame-400 bg-flame-600/5 p-4">
+          <p className="text-sm text-ink-700">
+            Si regeneras el código QR, cualquier código ya impreso en la lápida, nicho o placa
+            dejará de funcionar. ¿Seguro que quieres continuar?
+          </p>
+          <div className="mt-3 flex gap-2">
+            <button
+              onClick={() => setConfirmingRegenerate(false)}
+              disabled={loading}
+              className="rounded-lg bg-ink-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-ink-700 disabled:opacity-60"
+            >
+              Cancelar
+            </button>
+            <button
+              onClick={handleGenerate}
+              disabled={loading}
+              className="rounded-lg border border-flame-600 px-4 py-2 text-sm font-medium text-flame-600 transition-colors hover:bg-flame-600/10 disabled:opacity-60"
+            >
+              {loading ? 'Regenerando…' : 'Sí, regenerar'}
+            </button>
+          </div>
+        </div>
+      )}
 
       {result && result.success && (
         <div className="mt-8 space-y-4 rounded-lg border border-moss-400 bg-moss-50 p-5">
