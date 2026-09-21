@@ -5,10 +5,9 @@ import { useRouter } from 'next/navigation'
 import { uploadMemorialPhoto } from '@/lib/actions/uploadPhoto'
 import { setCoverPhoto } from '@/lib/actions/coverPhoto'
 import { UnlockButton } from '@/components/admin/UnlockButton'
+import { FREE_PHOTO_LIMIT } from '@/lib/planLimits'
 
 type ExistingPhoto = { id: string; storage_path: string; caption: string | null; is_cover: boolean }
-
-const FREE_PHOTO_LIMIT = 10
 
 type Props = {
   memorialId: string
