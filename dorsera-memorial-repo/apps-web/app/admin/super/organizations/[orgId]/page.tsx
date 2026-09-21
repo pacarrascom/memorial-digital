@@ -1,7 +1,8 @@
 import { redirect, notFound } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
- 
+import { AdminContainer } from '@/components/admin/AdminContainer';
+
 export default async function OrganizationDetailPage({
   params,
 }: {
@@ -61,7 +62,7 @@ export default async function OrganizationDetailPage({
   };
  
   return (
-    <div className="mx-auto max-w-2xl">
+    <AdminContainer size="2xl">
       <Link
         href="/admin/super/organizations"
         className="mb-6 inline-flex items-center gap-1 text-sm text-ink-500 hover:text-ink-700"
@@ -180,6 +181,6 @@ export default async function OrganizationDetailPage({
           </ul>
         )}
       </section>
-    </div>
+    </AdminContainer>
   );
 }

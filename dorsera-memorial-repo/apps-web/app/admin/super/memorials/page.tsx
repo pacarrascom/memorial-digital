@@ -1,7 +1,8 @@
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
- 
+import { AdminContainer } from '@/components/admin/AdminContainer';
+
 export default async function SuperAdminMemorialsPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -30,7 +31,7 @@ export default async function SuperAdminMemorialsPage() {
     .order('created_at', { ascending: false });
  
   return (
-    <div className="mx-auto max-w-3xl">
+    <AdminContainer size="3xl">
       <Link
         href="/admin"
         className="mb-6 inline-flex items-center gap-1 text-sm text-ink-500 hover:text-ink-700"
@@ -89,6 +90,6 @@ export default async function SuperAdminMemorialsPage() {
           ))}
         </ul>
       )}
-    </div>
+    </AdminContainer>
   );
 }

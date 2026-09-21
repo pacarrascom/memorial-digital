@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createMemorial } from '@/lib/actions/memorial'
 import { createClient } from '@/lib/supabase/client'
+import { AdminContainer } from '@/components/admin/AdminContainer'
  
 export default function NewMemorialPage() {
   const router = useRouter()
@@ -51,7 +52,7 @@ export default function NewMemorialPage() {
  
   if (isFuneraria) {
     return (
-      <div className="mx-auto max-w-lg">
+      <AdminContainer size="lg">
         <Link href="/admin" className="mb-4 inline-block text-sm text-ink-400 hover:text-ink-700">
           ← Volver al panel
         </Link>
@@ -60,12 +61,12 @@ export default function NewMemorialPage() {
           Tu cuenta es de tipo funeraria. Crea memoriales desde el panel de tu organización
           en /admin, no como memorial individual.
         </p>
-      </div>
+      </AdminContainer>
     )
   }
 
   return (
-    <div className="mx-auto max-w-lg">
+    <AdminContainer size="lg">
       <Link href="/admin" className="mb-4 inline-block text-sm text-ink-400 hover:text-ink-700">
         ← Volver al panel
       </Link>
@@ -154,6 +155,6 @@ export default function NewMemorialPage() {
           {loading ? 'Creando…' : 'Crear memorial'}
         </button>
       </form>
-    </div>
+    </AdminContainer>
   )
 }

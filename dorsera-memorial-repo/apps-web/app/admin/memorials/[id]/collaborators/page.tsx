@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { listCollaborators } from '@/lib/actions/collaborators';
 import { CollaboratorsManager } from '@/components/admin/CollaboratorsManager';
+import { AdminContainer } from '@/components/admin/AdminContainer';
 
 export default async function CollaboratorsPage({
   params,
@@ -39,7 +40,7 @@ export default async function CollaboratorsPage({
   const { data: collaborators, error } = await listCollaborators(memorialId);
 
   return (
-    <div className="mx-auto max-w-2xl">
+    <AdminContainer size="2xl">
       <Link
         href="/admin"
         className="mb-6 inline-flex items-center gap-1 text-sm text-ink-500 hover:text-ink-700"
@@ -60,6 +61,6 @@ export default async function CollaboratorsPage({
         collaboratorLimit={memorial.collaborator_limit}
         loadError={error}
       />
-    </div>
+    </AdminContainer>
   );
 }

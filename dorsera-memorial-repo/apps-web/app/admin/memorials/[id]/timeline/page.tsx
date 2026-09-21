@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { TimelineManager } from '@/components/timeline/TimelineManager';
 import { UnlockButton } from '@/components/admin/UnlockButton';
+import { AdminContainer } from '@/components/admin/AdminContainer';
 import { FREE_TIMELINE_LIMIT } from '@/lib/planLimits';
 
 export default async function TimelinePage({
@@ -50,7 +51,7 @@ export default async function TimelinePage({
     !entitlement?.timeline_unlimited && (events?.length ?? 0) >= FREE_TIMELINE_LIMIT;
 
   return (
-    <div className="mx-auto max-w-2xl">
+    <AdminContainer size="2xl">
       <Link
         href="/admin"
         className="mb-6 inline-flex items-center gap-1 text-sm text-ink-500 hover:text-ink-700"
@@ -74,6 +75,6 @@ export default async function TimelinePage({
         initialEvents={events ?? []}
         canEdit={Boolean(canEdit)}
       />
-    </div>
+    </AdminContainer>
   );
 }

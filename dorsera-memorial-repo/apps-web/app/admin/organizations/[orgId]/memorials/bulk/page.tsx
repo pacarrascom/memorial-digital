@@ -2,6 +2,7 @@ import { redirect, notFound } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { BulkMemorialUpload } from '@/components/admin/BulkMemorialUpload';
+import { AdminContainer } from '@/components/admin/AdminContainer';
 
 export default async function BulkMemorialPage({
   params,
@@ -27,7 +28,7 @@ export default async function BulkMemorialPage({
   }
 
   return (
-    <div className="mx-auto max-w-2xl">
+    <AdminContainer size="2xl">
       <Link
         href="/admin"
         className="mb-6 inline-flex items-center gap-1 text-sm text-ink-500 hover:text-ink-700"
@@ -41,6 +42,6 @@ export default async function BulkMemorialPage({
       <p className="mb-6 text-sm text-ink-500">para {org.name}</p>
 
       <BulkMemorialUpload organizationId={org.id} organizationName={org.name} />
-    </div>
+    </AdminContainer>
   );
 }

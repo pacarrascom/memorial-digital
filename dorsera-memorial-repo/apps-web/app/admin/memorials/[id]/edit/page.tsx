@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { EditProfileForm } from '@/components/admin/EditProfileForm'
+import { AdminContainer } from '@/components/admin/AdminContainer'
 
 type PageProps = { params: Promise<{ id: string }> }
 
@@ -24,7 +25,7 @@ export default async function EditMemorialPage({ params }: PageProps) {
     : memorial.person_profile
 
   return (
-    <div className="mx-auto max-w-lg">
+    <AdminContainer size="lg">
       <Link href="/admin" className="mb-6 inline-flex items-center gap-1 text-sm text-ink-500 hover:text-ink-700">
         ← Volver al panel
       </Link>
@@ -42,6 +43,6 @@ export default async function EditMemorialPage({ params }: PageProps) {
           biography: person?.biography ?? null,
         }}
       />
-    </div>
+    </AdminContainer>
   )
 }

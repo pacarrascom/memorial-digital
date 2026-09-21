@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { MemorialCard } from "@/components/admin/MemorialCard";
+import { AdminContainer } from "@/components/admin/AdminContainer";
 import { UnlockButton } from "@/components/admin/UnlockButton";
 import type { FamilyInsightsData } from "@/components/admin/FamilyInsights";
 
@@ -150,7 +151,7 @@ export default async function AdminPage() {
   const isFuneraria = user?.user_metadata?.account_type === "funeraria";
 
   return (
-    <div className="mx-auto max-w-6xl">
+    <AdminContainer size="6xl">
       <div className="mb-8 flex items-center justify-between">
         <h1 className="font-display text-2xl text-ink-900 dark:text-stone-50">
           Tus memoriales
@@ -282,6 +283,6 @@ export default async function AdminPage() {
           )}
         </div>
       ))}
-    </div>
+    </AdminContainer>
   );
 }
