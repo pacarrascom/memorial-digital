@@ -2,7 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { MemorialCard } from "@/components/admin/MemorialCard";
 import { UnlockButton } from "@/components/admin/UnlockButton";
-import { FamilyInsights, type FamilyInsightsItem } from "@/components/admin/FamilyInsights";
+import type { FamilyInsightsData } from "@/components/admin/FamilyInsights";
 
 function emptyCounts() {
   return { candles: 0, reactions: 0, tributesTotal: 0, tributesPending: 0, media: 0, timelineEvents: 0 };
@@ -41,7 +41,7 @@ export default async function AdminPage() {
     .map((r: any) => r.memorial?.id)
     .filter(Boolean) as string[];
 
-  let familyInsightsList: FamilyInsightsItem[] = [];
+  let familyInsightsByMemorial: Record<string, FamilyInsightsData> = {};
   if (familyMemorialIds.length > 0) {
     const [candlesRows, reactionsRows, guestbookRows, mediaRows, timelineRows] = await Promise.all([
       supabase.from("candles").select("memorial_id").in("memorial_id", familyMemorialIds),
@@ -63,25 +63,18 @@ export default async function AdminPage() {
       (guestbookRows.data ?? []).filter((r: any) => r.moderation_status === "pendiente")
     );
 
-    familyInsightsList = (roles ?? [])
-      .filter((r: any) => r.memorial?.id)
-      .map((r: any) => {
-        const id = r.memorial.id as string;
-        return {
-          memorialId: id,
-          slug: r.memorial.slug as string,
-          fullName: (r.memorial.person_profile?.full_name as string) ?? "Sin nombre",
-          data: {
-            ...emptyCounts(),
-            candles: candlesById[id] ?? 0,
-            reactions: reactionsById[id] ?? 0,
-            tributesTotal: tributesTotalById[id] ?? 0,
-            tributesPending: tributesPendingById[id] ?? 0,
-            media: mediaById[id] ?? 0,
-            timelineEvents: timelineById[id] ?? 0,
-          },
-        };
-      });
+    familyInsightsByMemorial = familyMemorialIds.reduce((acc: Record<string, FamilyInsightsData>, id) => {
+      acc[id] = {
+        ...emptyCounts(),
+        candles: candlesById[id] ?? 0,
+        reactions: reactionsById[id] ?? 0,
+        tributesTotal: tributesTotalById[id] ?? 0,
+        tributesPending: tributesPendingById[id] ?? 0,
+        media: mediaById[id] ?? 0,
+        timelineEvents: timelineById[id] ?? 0,
+      };
+      return acc;
+    }, {});
   }
 
   const { data: orgRoles } = await supabase
@@ -179,10 +172,6 @@ export default async function AdminPage() {
         </div>
       )}
 
-      {!isFuneraria && familyInsightsList.length > 0 && (
-        <FamilyInsights items={familyInsightsList} />
-      )}
-
       {!isFuneraria && (
         !roles || roles.length === 0 ? (
         <p className="text-ink-400 dark:text-ash-night">
@@ -200,6 +189,7 @@ export default async function AdminPage() {
               deathDate={r.memorial?.person_profile?.death_date ?? null}
               visibility={r.memorial?.visibility ?? "privado"}
               roleName={r.role?.name ?? ""}
+              insights={r.memorial?.id ? familyInsightsByMemorial[r.memorial.id] : undefined}
             />
           ))}
         </ul>
