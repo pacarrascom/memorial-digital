@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { MemorialCard } from "@/components/admin/MemorialCard";
 import { UnlockButton } from "@/components/admin/UnlockButton";
+import { FamilyInsights, type FamilyInsightsData } from "@/components/admin/FamilyInsights";
 
 export default async function AdminPage() {
   const supabase = await createClient();
@@ -24,6 +25,51 @@ export default async function AdminPage() {
     )
     .eq("user_id", user?.id ?? "")
     .not("memorial_id", "is", null);
+
+  const familyMemorialIds = (roles ?? [])
+    .map((r: any) => r.memorial?.id)
+    .filter(Boolean) as string[];
+
+  let familyInsights: FamilyInsightsData | null = null;
+  if (familyMemorialIds.length > 0) {
+    const [candles, reactions, tributesTotal, tributesPending, media, timelineEvents] =
+      await Promise.all([
+        supabase
+          .from("candles")
+          .select("id", { count: "exact", head: true })
+          .in("memorial_id", familyMemorialIds),
+        supabase
+          .from("reactions")
+          .select("id", { count: "exact", head: true })
+          .in("memorial_id", familyMemorialIds),
+        supabase
+          .from("guestbook_entries")
+          .select("id", { count: "exact", head: true })
+          .in("memorial_id", familyMemorialIds),
+        supabase
+          .from("guestbook_entries")
+          .select("id", { count: "exact", head: true })
+          .in("memorial_id", familyMemorialIds)
+          .eq("moderation_status", "pendiente"),
+        supabase
+          .from("media_assets")
+          .select("id", { count: "exact", head: true })
+          .in("memorial_id", familyMemorialIds),
+        supabase
+          .from("timeline_events")
+          .select("id", { count: "exact", head: true })
+          .in("memorial_id", familyMemorialIds),
+      ]);
+
+    familyInsights = {
+      candles: candles.count ?? 0,
+      reactions: reactions.count ?? 0,
+      tributesTotal: tributesTotal.count ?? 0,
+      tributesPending: tributesPending.count ?? 0,
+      media: media.count ?? 0,
+      timelineEvents: timelineEvents.count ?? 0,
+    };
+  }
 
   const { data: orgRoles } = await supabase
     .from("user_roles")
@@ -119,6 +165,8 @@ export default async function AdminPage() {
           ))}
         </div>
       )}
+
+      {!isFuneraria && familyInsights && <FamilyInsights data={familyInsights} />}
 
       {!isFuneraria && (
         !roles || roles.length === 0 ? (
