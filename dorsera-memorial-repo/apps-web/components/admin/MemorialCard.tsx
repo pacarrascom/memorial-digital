@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { MoreVertical } from 'lucide-react';
 import { MemorialInsights, type FamilyInsightsData } from './FamilyInsights';
+import { QrModal } from './QrModal';
 
 type MemorialCardProps = {
   memorialId: string;
@@ -44,6 +45,7 @@ export function MemorialCard({
   insights,
 }: MemorialCardProps) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [qrOpen, setQrOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
  
   useEffect(() => {
@@ -109,13 +111,16 @@ export function MemorialCard({
 
             {menuOpen && (
               <div className="absolute right-0 z-10 mt-2 w-44 rounded-lg border border-stone-200 bg-white py-1 shadow-lg">
-                <Link
-                  href={`/admin/memorials/${memorialId}/qr`}
-                  className="block px-4 py-2 text-sm text-ink-700 hover:bg-stone-50"
-                  onClick={() => setMenuOpen(false)}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMenuOpen(false);
+                    setQrOpen(true);
+                  }}
+                  className="block w-full px-4 py-2 text-left text-sm text-ink-700 hover:bg-stone-50"
                 >
                   Código QR
-                </Link>
+                </button>
                 <Link
                   href={`/admin/memorials/${memorialId}/gallery`}
                   className="block px-4 py-2 text-sm text-ink-700 hover:bg-stone-50"
@@ -152,9 +157,16 @@ export function MemorialCard({
 
       {insights && (
         <div className="mt-4 border-t border-stone-100 pt-4">
-          <MemorialInsights memorialId={memorialId} slug={slug} data={insights} />
+          <MemorialInsights memorialId={memorialId} slug={slug} fullName={fullName} data={insights} />
         </div>
       )}
+
+      <QrModal
+        open={qrOpen}
+        onClose={() => setQrOpen(false)}
+        memorialId={memorialId}
+        personName={fullName}
+      />
     </li>
   );
 }

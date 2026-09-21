@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
+import { QrModal } from "./QrModal";
 
 export type FamilyInsightsData = {
   candles: number;
@@ -69,12 +72,16 @@ function StatTile({
 export function MemorialInsights({
   memorialId,
   slug,
+  fullName,
   data,
 }: {
   memorialId: string;
   slug: string;
+  fullName?: string;
   data: FamilyInsightsData;
 }) {
+  const [qrOpen, setQrOpen] = useState(false);
+
   // Nadie lo visitó todavía: ni velas, ni flores/corazones, ni mensajes
   // (y por lo tanto tampoco hay nada por moderar). El contenido que la
   // familia subió (fotos, timeline) no cuenta para esto — es propio, no
@@ -90,12 +97,19 @@ export function MemorialInsights({
               Aún no ha recibido visitas. Comparte el código QR para que familiares y amigos
               puedan dejar su cariño.
             </p>
-            <Link
-              href={`/admin/memorials/${memorialId}/qr`}
+            <button
+              type="button"
+              onClick={() => setQrOpen(true)}
               className="shrink-0 rounded-full bg-moss-600 px-5 py-2 text-sm text-stone-50 transition-colors hover:bg-moss-800"
             >
               Compartir código QR
-            </Link>
+            </button>
+            <QrModal
+              open={qrOpen}
+              onClose={() => setQrOpen(false)}
+              memorialId={memorialId}
+              personName={fullName}
+            />
           </div>
         ) : (
           <>
