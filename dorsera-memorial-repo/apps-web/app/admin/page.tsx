@@ -150,7 +150,7 @@ export default async function AdminPage() {
   const isFuneraria = user?.user_metadata?.account_type === "funeraria";
 
   return (
-    <div>
+    <div className="mx-auto max-w-6xl">
       <div className="mb-8 flex items-center justify-between">
         <h1 className="font-display text-2xl text-ink-900 dark:text-stone-50">
           Tus memoriales

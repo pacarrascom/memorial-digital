@@ -108,11 +108,24 @@ export function MemorialInsights({
   // visitas — así que sigue mostrándose igual más abajo.
   const noActivity = data.candles === 0 && data.reactions === 0 && data.tributesTotal === 0;
 
+  const fotosTile = (
+    <StatTile
+      href={`/admin/memorials/${memorialId}/gallery`}
+      icon="📷"
+      label="Fotos y recuerdos"
+      value={data.media}
+      displayValue={data.photosUnlimited ? undefined : `${data.media}/${FREE_PHOTO_LIMIT} fotos`}
+      note={
+        !data.photosUnlimited && data.media >= FREE_PHOTO_LIMIT ? <FreePlanBadge /> : undefined
+      }
+    />
+  );
+
   return (
     <div>
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-        {noActivity ? (
-          <div className="col-span-full flex flex-col items-start gap-3 rounded-lg border border-moss-400/30 bg-moss-600/5 p-5 sm:flex-row sm:items-center sm:justify-between">
+      {noActivity ? (
+        <div className="space-y-3">
+          <div className="flex flex-col items-start gap-3 rounded-lg border border-moss-400/30 bg-moss-600/5 p-5 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-sm text-ink-700">
               Aún no ha recibido visitas. Comparte el código QR para que familiares y amigos
               puedan dejar su cariño.
@@ -131,56 +144,51 @@ export function MemorialInsights({
               personName={fullName}
             />
           </div>
-        ) : (
-          <>
-            <StatTile
-              href={`/m/${slug}#tributes-heading`}
-              icon="🕯️"
-              label="Velas encendidas"
-              value={data.candles}
-            />
-            <StatTile
-              href={`/m/${slug}#tributes-heading`}
-              icon="🌸"
-              label="Flores y cariño"
-              value={data.reactions}
-            />
-            <StatTile
-              href={`/admin/memorials/${memorialId}/guestbook`}
-              icon="💬"
-              label="Mensajes recibidos"
-              value={data.tributesTotal}
-            />
-            <StatTile
-              href={`/admin/memorials/${memorialId}/guestbook`}
-              icon="📝"
-              label="Por moderar"
-              value={data.tributesPending}
-              attention={data.tributesPending > 0}
-              ariaLabel={
-                data.tributesPending > 0
-                  ? `${data.tributesPending} ${data.tributesPending === 1 ? "mensaje" : "mensajes"} por moderar, ver cola de moderación`
-                  : "Sin mensajes por moderar"
-              }
-              note={
-                data.tributesPending > 0 ? (
-                  <p className="mt-1 text-xs text-flame-600">Esperando tu revisión</p>
-                ) : undefined
-              }
-            />
-          </>
-        )}
-        <StatTile
-          href={`/admin/memorials/${memorialId}/gallery`}
-          icon="📷"
-          label="Fotos y recuerdos"
-          value={data.media}
-          displayValue={data.photosUnlimited ? undefined : `${data.media}/${FREE_PHOTO_LIMIT} fotos`}
-          note={
-            !data.photosUnlimited && data.media >= FREE_PHOTO_LIMIT ? <FreePlanBadge /> : undefined
-          }
-        />
-      </div>
+          {/* Sola, sin las otras 4 métricas al lado, no debe forzar el ancho
+              de una grilla de 5 columnas — eso dejaba un hueco vacío enorme
+              a la derecha. Ancho acotado, como una tarjeta normal. */}
+          <div className="max-w-[13rem]">{fotosTile}</div>
+        </div>
+      ) : (
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+          <StatTile
+            href={`/m/${slug}#tributes-heading`}
+            icon="🕯️"
+            label="Velas encendidas"
+            value={data.candles}
+          />
+          <StatTile
+            href={`/m/${slug}#tributes-heading`}
+            icon="🌸"
+            label="Flores y cariño"
+            value={data.reactions}
+          />
+          <StatTile
+            href={`/admin/memorials/${memorialId}/guestbook`}
+            icon="💬"
+            label="Mensajes recibidos"
+            value={data.tributesTotal}
+          />
+          <StatTile
+            href={`/admin/memorials/${memorialId}/guestbook`}
+            icon="📝"
+            label="Por moderar"
+            value={data.tributesPending}
+            attention={data.tributesPending > 0}
+            ariaLabel={
+              data.tributesPending > 0
+                ? `${data.tributesPending} ${data.tributesPending === 1 ? "mensaje" : "mensajes"} por moderar, ver cola de moderación`
+                : "Sin mensajes por moderar"
+            }
+            note={
+              data.tributesPending > 0 ? (
+                <p className="mt-1 text-xs text-flame-600">Esperando tu revisión</p>
+              ) : undefined
+            }
+          />
+          {fotosTile}
+        </div>
+      )}
       {/* Siempre visible, incluso en 0 — que aparezca/desaparezca según el
           conteo hacía que las tarjetas quedaran de distinta altura entre sí. */}
       <p className="mt-3 text-xs text-ink-400">
