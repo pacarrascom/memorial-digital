@@ -60,6 +60,7 @@ create index idx_memorials_slug on public.memorials (slug);
 create or replace function public.set_memorial_collaborator_limit_default()
 returns trigger
 language plpgsql
+set search_path = public
 as $$
 begin
   new.collaborator_limit := case when new.organization_id is null then 1 else 2 end;

@@ -33,6 +33,22 @@ Aplícalas en ese orden, tal cual, en el **SQL Editor de Supabase** (Dashboard �
 - Antes existían en producción dos overloads "huérfanos" de una iteración anterior (`create_memorial_for_org` de 6 args, `request_organization` de 2 args). Se eliminaron el 2026-09-21 (migración `drop_orphaned_function_overloads`) porque el frontend ya no los llamaba; por eso tampoco están en `0006` de este repo.
 - Todas las tablas quedan con RLS activado por el event trigger de `0001`, no por `alter table ... enable row level security` explícito en cada `create table` — si agregas una tabla nueva fuera de estas migraciones, igual quedará protegida por defecto.
 
+## Hardening de seguridad (2026-09-21)
+
+A partir del Security Advisor de Supabase se aplicaron tres fixes en producción:
+
+- **`search_path` fijado** en las 8 funciones `SECURITY DEFINER`/`STABLE` que no lo tenían (protección contra search_path hijacking) — ya reflejado en `0002` (`set_memorial_collaborator_limit_default`) y `0005` (el resto) de este repo. Un ambiente nuevo que corra estas migraciones desde cero nace sin esa advertencia.
+- **Extensión `unaccent` movida** de `public` a `extensions` — ya reflejado en `0001` (`create schema if not exists extensions; create extension ... with schema extensions;`).
+- **`EXECUTE` de `rls_auto_enable()` revocado de `PUBLIC`** — quedaba invocable vía `/rest/v1/rpc/rls_auto_enable` sin necesidad. **Esto NO está en las migraciones de este repo** porque `rls_auto_enable()` tampoco lo está (es la función detrás del event trigger `ensure_rls` que Supabase provisiona solo, ver nota en `0001`). Si algún día se reconstruye producción desde cero en un proyecto Supabase nuevo, hay que correr a mano:
+  ```sql
+  revoke execute on function public.rls_auto_enable() from public;
+  ```
+  (Revocar solo de `anon`/`authenticated` **no alcanza** — heredan el `EXECUTE` que Postgres le da a `PUBLIC` por defecto al crear cualquier función.)
+
+Quedan dos advertencias del advisor **sin tocar, a propósito**:
+- Las 20 funciones `SECURITY DEFINER` restantes siguen expuestas a `anon`/`authenticated` — es el patrón de diseño del proyecto (cada una valida permisos por dentro).
+- `auth_leaked_password_protection` (WARN) — se activa en Dashboard → Authentication, no por SQL.
+
 ## Verificar que coincide con producción
 
 Antes de asumir que este repo sigue reflejando la base real, compará contra el proyecto vivo (asumiendo acceso vía MCP de Supabase o el dashboard):

@@ -9,6 +9,7 @@ returns boolean
 language sql
 stable
 security definer
+set search_path = public
 as $$
   select exists (
     select 1 from user_roles ur
@@ -22,6 +23,7 @@ returns boolean
 language sql
 stable
 security definer
+set search_path = public
 as $$
   select exists (
     select 1
@@ -38,6 +40,7 @@ returns boolean
 language sql
 stable
 security definer
+set search_path = public
 as $$
   select exists (
     select 1
@@ -56,6 +59,7 @@ returns boolean
 language sql
 stable
 security definer
+set search_path = public
 as $$
   select exists (
     select 1
@@ -73,6 +77,7 @@ create or replace function public.memorial_is_public(p_memorial_id uuid)
 returns boolean
 language sql
 stable
+set search_path = public
 as $$
   select visibility = 'publico' from memorials where id = p_memorial_id;
 $$;
@@ -105,6 +110,7 @@ returns integer
 language sql
 stable
 security definer
+set search_path = public
 as $$
   select 25 + coalesce((
     select sum(quantity)
@@ -119,6 +125,7 @@ returns integer
 language sql
 stable
 security definer
+set search_path = public
 as $$
   select count(*)::int
   from memorials

@@ -6,7 +6,12 @@
 -- ============================================================================
 
 create extension if not exists pgcrypto with schema public;
-create extension if not exists unaccent with schema public;
+
+-- unaccent vive en su propio schema (no en public) — buena práctica
+-- confirmada por el Security Advisor de Supabase. `extensions` ya existe
+-- en cualquier proyecto Supabase; en un Postgres plano hay que crearlo.
+create schema if not exists extensions;
+create extension if not exists unaccent with schema extensions;
 
 create type public.role_name as enum (
   'super_admin',
