@@ -28,7 +28,7 @@ export default async function NewOrgMemorialPage({
   }
 
   return (
-    <AdminContainer size="xl">
+    <AdminContainer size="form">
       <Link
         href="/admin"
         className="mb-6 inline-flex items-center gap-1 text-sm text-ink-500 hover:text-ink-700"

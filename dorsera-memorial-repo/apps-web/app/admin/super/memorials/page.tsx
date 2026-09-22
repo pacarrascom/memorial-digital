@@ -31,7 +31,7 @@ export default async function SuperAdminMemorialsPage() {
     .order('created_at', { ascending: false });
  
   return (
-    <AdminContainer size="3xl">
+    <AdminContainer size="content">
       <Link
         href="/admin"
         className="mb-6 inline-flex items-center gap-1 text-sm text-ink-500 hover:text-ink-700"

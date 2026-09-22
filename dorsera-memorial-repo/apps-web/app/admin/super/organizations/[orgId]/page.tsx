@@ -62,7 +62,7 @@ export default async function OrganizationDetailPage({
   };
  
   return (
-    <AdminContainer size="2xl">
+    <AdminContainer size="content">
       <Link
         href="/admin/super/organizations"
         className="mb-6 inline-flex items-center gap-1 text-sm text-ink-500 hover:text-ink-700"

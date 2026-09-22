@@ -52,7 +52,7 @@ export default function NewMemorialPage() {
  
   if (isFuneraria) {
     return (
-      <AdminContainer size="lg">
+      <AdminContainer size="form">
         <Link href="/admin" className="mb-4 inline-block text-sm text-ink-400 hover:text-ink-700">
           ← Volver al panel
         </Link>
@@ -66,7 +66,7 @@ export default function NewMemorialPage() {
   }
 
   return (
-    <AdminContainer size="lg">
+    <AdminContainer size="form">
       <Link href="/admin" className="mb-4 inline-block text-sm text-ink-400 hover:text-ink-700">
         ← Volver al panel
       </Link>
