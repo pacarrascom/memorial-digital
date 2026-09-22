@@ -25,7 +25,7 @@ export default async function EditMemorialPage({ params }: PageProps) {
     : memorial.person_profile
 
   return (
-    <AdminContainer size="lg">
+    <AdminContainer size="form">
       <Link href="/admin" className="mb-6 inline-flex items-center gap-1 text-sm text-ink-500 hover:text-ink-700">
         ← Volver al panel
       </Link>

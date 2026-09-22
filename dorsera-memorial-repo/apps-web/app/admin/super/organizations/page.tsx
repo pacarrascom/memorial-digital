@@ -25,7 +25,7 @@ export default async function SuperAdminOrganizationsPage() {
     .order('requested_at', { ascending: false });
  
   return (
-    <AdminContainer size="2xl">
+    <AdminContainer size="content">
       <Link
         href="/admin"
         className="mb-6 inline-flex items-center gap-1 text-sm text-ink-500 hover:text-ink-700"
